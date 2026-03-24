@@ -1,0 +1,861 @@
+import React, { useState, useEffect, useRef } from "react";
+
+const STYLES = `
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f4f6f9; }
+
+:root {
+  --navy: #1B3F7E;
+  --navy-dark: #122D5E;
+  --navy-light: #2752A3;
+  --accent: #E8861A;
+  --bg: #F7F9FC;
+  --bg2: #EEF2F8;
+  --white: #FFFFFF;
+  --text: #1A2540;
+  --muted: #6B7A99;
+  --border: #D5DDF0;
+  --success: #1E8A4C;
+}
+
+.root {
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, .heading { font-family: 'Montserrat', sans-serif; font-weight: 700; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+.topbar {
+  background: var(--navy-dark);
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 3px solid var(--accent);
+  flex-shrink: 0;
+}
+.logo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: white;
+  letter-spacing: 0.05em;
+}
+.logo span { color: var(--accent); }
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.1em;
+}
+.nav-dots { display: flex; gap: 6px; align-items: center; }
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.25s;
+  border: none;
+  padding: 0;
+}
+.dot.active { background: var(--accent); width: 20px; border-radius: 3px; }
+
+.slide-wrap { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+
+.slide-body {
+  flex: 1;
+  overflow-y: auto;
+  animation: fadeSlide 0.35s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.bottombar {
+  background: var(--navy-dark);
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.slide-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.nav-hint { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25); }
+.progress-track { height: 2px; background: rgba(255,255,255,0.08); flex: 1; margin: 0 20px; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+.arrow-btn {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--navy);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(27,63,126,0.1);
+  transition: all 0.2s;
+  z-index: 5;
+}
+.arrow-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+
+.section-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  color: var(--navy-dark);
+  line-height: 1.1;
+  font-size: clamp(20px, 2.6vw, 36px);
+}
+.title-accent { color: var(--navy-light); }
+.divider { width: 44px; height: 3px; background: var(--accent); border-radius: 2px; margin: 12px 0 22px; }
+
+.card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(27,63,126,0.06); }
+.card-topbar { height: 4px; }
+.card-body { padding: 18px 20px; }
+
+.tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--bg2);
+  color: var(--navy);
+  border: 1px solid var(--border);
+}
+
+.agenda-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(27,63,126,0.04);
+}
+.agenda-item:hover { border-color: var(--navy-light); transform: translateX(4px); box-shadow: 0 3px 14px rgba(27,63,126,0.1); }
+.agenda-num {
+  font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 11px;
+  color: var(--navy); background: var(--bg2);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 1px solid var(--border);
+}
+.agenda-text { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 14px; color: var(--text); flex: 1; }
+.agenda-arrow { color: var(--muted); font-size: 14px; transition: all 0.2s; }
+.agenda-item:hover .agenda-arrow { color: var(--navy-light); transform: translateX(2px); }
+
+.team-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(27,63,126,0.06); height: 100%; display: flex; flex-direction: column; }
+.team-card-header { background: var(--navy); padding: 18px 20px 14px; color: white; }
+.team-name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.team-role { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
+.team-card-body { padding: 14px 20px; flex: 1; }
+.cred-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--navy-light); background: #EEF4FF;
+  border: 1px solid #C5D5F0; padding: 4px 9px;
+  border-radius: 4px; margin-bottom: 10px;
+}
+
+.proj-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--bg2); }
+.proj-row:last-child { border-bottom: none; }
+.proj-row-label { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); width: 64px; flex-shrink: 0; padding-top: 2px; }
+.proj-row-text { font-size: 13px; color: var(--text); line-height: 1.55; flex: 1; }
+
+.challenge-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(27,63,126,0.05); }
+.challenge-header { background: linear-gradient(135deg,var(--navy-dark),var(--navy)); padding: 18px 22px; color: white; display: flex; align-items: center; gap: 14px; }
+.challenge-num { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 32px; color: rgba(255,255,255,0.15); line-height: 1; }
+.challenge-name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; }
+
+.step-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 1px 4px rgba(27,63,126,0.04); }
+.step-num-box { width: 30px; height: 30px; background: var(--navy); color: white; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 3px; }
+
+.search-container { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; margin-top: 14px; }
+.search-label { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--navy); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.8s ease infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.search-bar { display: flex; gap: 8px; align-items: center; }
+.search-input { flex: 1; font-family: 'Source Sans 3', sans-serif; font-size: 13px; color: var(--text); background: var(--white); border: 1px solid var(--border); border-radius: 5px; padding: 8px 12px; outline: none; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(--navy-light); }
+.search-input::placeholder { color: var(--muted); }
+.search-btn { background: var(--navy); color: white; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.04em; border: none; border-radius: 5px; padding: 8px 16px; cursor: pointer; white-space: nowrap; }
+.search-btn:hover { background: var(--navy-light); }
+.spinner { width: 13px; height: 13px; border: 2px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.status-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
+.result-row { display: flex; align-items: center; gap: 12px; padding: 9px 12px; background: var(--white); border: 1px solid var(--border); border-radius: 5px; margin-top: 7px; animation: fadeUp 0.25s ease forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.result-icon { font-size: 18px; flex-shrink: 0; }
+.result-title { font-weight: 600; font-size: 12px; color: var(--text); }
+.result-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.result-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); background: var(--bg2); border: 1px solid var(--border); padding: 2px 5px; border-radius: 3px; }
+.result-score { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 13px; color: var(--navy); margin-left: auto; flex-shrink: 0; }
+
+.deliverable-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 4px rgba(27,63,126,0.04); }
+.del-icon-box { width: 34px; height: 34px; background: #EEF4FF; border: 1px solid #C5D5F0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.del-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; color: var(--navy); margin-bottom: 4px; }
+.del-text { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+.fee-box { background: var(--navy-dark); color: white; border-radius: 8px; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.fee-label { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 4px; }
+.fee-desc { font-size: 12px; color: rgba(255,255,255,0.55); }
+.fee-amount { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 26px; color: white; white-space: nowrap; }
+
+.action-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 4px rgba(27,63,126,0.04); }
+.action-row:hover { border-color: var(--navy-light); }
+.action-row.done { background: #F0F7FF; border-color: #A8C4EA; }
+.checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; flex-shrink: 0; transition: all 0.2s; }
+.checkbox.done { background: var(--navy); border-color: var(--navy); color: white; }
+.action-text { font-weight: 600; font-size: 13px; color: var(--text); flex: 1; }
+.action-text.done { color: var(--navy); }
+.action-owner { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.day-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--navy); background: #EEF4FF; border: 1px solid #C5D5F0; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+
+.btn-primary { background: var(--navy); color: white; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.05em; border: none; border-radius: 5px; padding: 10px 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;}
+.btn-primary:hover { background: var(--navy-light); }
+.btn-outline { background: transparent; color: var(--navy); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.05em; border: 1.5px solid var(--navy); border-radius: 5px; padding: 10px 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;}
+.btn-outline:hover { background: var(--navy); color: white; }
+
+.callout { background: #EEF4FF; border: 1px solid #C5D5F0; border-left: 3px solid var(--navy); border-radius: 6px; padding: 11px 14px; display: flex; gap: 10px; align-items: flex-start; }
+.callout-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+
+/* Cover slide specific */
+.cover-side {
+  background: var(--navy-dark);
+  width: 260px;
+  min-width: 200px;
+  flex-shrink: 0;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+.cover-side::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 5px; background: var(--accent); }
+.cover-meta-label { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.35); margin-bottom: 3px; }
+.cover-meta-value { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 14px; }
+.confidential-stamp { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.12em; }
+
+/* Client Network specific styles */
+.client-list { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.client-item { padding: 14px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--white); cursor: pointer; transition: all 0.2s; text-align: left; display: block; width: 100%; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.client-item:hover { border-color: #a8c4ea; }
+.client-item.active { border-color: var(--navy-light); background: var(--bg2); box-shadow: inset 3px 0 0 var(--navy); }
+.client-name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; color: var(--navy-dark); margin-bottom: 3px; }
+.client-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+.li-preview { border: 1px solid var(--border); border-radius: 8px; background: var(--white); overflow: hidden; height: 100%; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(27,63,126,0.06); }
+.li-banner { height: 80px; background: linear-gradient(135deg, #0077b5, #004d75); position: relative; }
+.li-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--white); background: var(--bg2); position: absolute; bottom: -35px; left: 24px; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 24px; color: var(--navy); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.li-body { padding: 50px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+.li-name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.li-badge { color: #0077b5; font-size: 14px; }
+.li-title { font-size: 14px; color: var(--text); margin-bottom: 12px; line-height: 1.5; font-weight: 400; }
+.li-divider { height: 1px; background: var(--border); margin: 16px 0; }
+.btn-linkedin { display: inline-flex; align-items: center; gap: 8px; background: #0077b5; color: white; padding: 10px 20px; border-radius: 20px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; text-decoration: none; transition: background 0.2s; width: fit-content; margin-top: auto;}
+.btn-linkedin:hover { background: #006097; color: white; }
+
+@media (max-width: 600px) { .cover-side { display: none; } }
+`;
+
+const DEMO_RESULTS = [
+  { icon: "🛋️", title: "Modular Sofa — 2BHK Bangalore (2023)", match: "98.2%", tags: ["L-shape","4.2m","Fabric"] },
+  { icon: "🏮", title: "Ambient Lighting — Villa Project (2022)", match: "94.7%", tags: ["Warm","Recessed","LED"] },
+  { icon: "🪑", title: "Ergonomic Chair Set — Corporate (2024)", match: "91.3%", tags: ["Mesh","Swivel","6-unit"] },
+];
+
+const AGENDA = [
+  { label: "Company Journey & Compliance", slide: 1 },
+  { label: "The Engineering Team", slide: 2 },
+  { label: "Enterprise & AI Portfolio", slide: 3 },
+  { label: "Client Network & References", slide: 4 }, 
+  { label: "The Technical Mandate (Addressing the Core Challenges)", slide: 5 },
+  { label: "Unlocking the AI Query Engine", slide: 6 },
+  { label: "Phase 0: The ₹50K Architecture Audit", slide: 7 },
+  { label: "Immediate Next Steps", slide: 8 },
+];
+
+const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "Client Network", "Technical Mandate", "AI Query Engine", "Phase 0 Audit", "Next Steps"];
+
+function Slide1({ goTo }) {
+  return (
+    <div style={{ display: "flex", minHeight: "100%" }}>
+      <div className="cover-side">
+        <div>
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 20, color: "white", letterSpacing: "0.05em" }}>
+              IN<span style={{ color: "var(--accent)" }}>ZEPH</span>
+            </div>
+            <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 600, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.14em", color: "rgba(255,255,255,0.35)", marginTop: 3 }}>
+              Software Ventures
+            </div>
+          </div>
+          <div style={{ width: 28, height: 3, background: "var(--accent)", borderRadius: 2, marginBottom: 24 }} />
+          <div className="cover-meta-label">Prepared for</div>
+          <div className="cover-meta-value">Vibrant Spaces Pvt. Ltd.</div>
+          <div className="cover-meta-label">Prepared by</div>
+          <div className="cover-meta-value">Inzeph Software Ventures</div>
+          <div className="cover-meta-label">Date</div>
+          <div className="cover-meta-value">March 2026</div>
+          <div className="cover-meta-label">Confidentiality</div>
+          <div className="cover-meta-value">MNDA Enclosed</div>
+        </div>
+        <div className="confidential-stamp">Confidential</div>
+      </div>
+      <div style={{ flex: 1, padding: "36px 40px 36px 44px", overflowY: "auto" }}>
+        <div className="section-eyebrow">Technical Briefing · 2026</div>
+        <h1 className="slide-title" style={{ fontSize: "clamp(22px,2.8vw,38px)", marginBottom: 6 }}>
+          Technical Architecture &<br />
+          <span className="title-accent">AI Integration Strategy</span>
+        </h1>
+        <div className="divider" />
+        <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 24, maxWidth: 500, lineHeight: 1.65 }}>
+          This presentation outlines our unified technical approach for Vibrant Spaces — covering the engineering team, AI portfolio, and the phased execution plan.
+        </p>
+        <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--muted)", marginBottom: 10 }}>
+          Agenda — click any item to jump to that section
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+          {AGENDA.map((item, i) => (
+            <div key={i} className="agenda-item" onClick={() => goTo(item.slide)}>
+              <div className="agenda-num">{String(i + 1).padStart(2, "0")}</div>
+              <div className="agenda-text">{item.label}</div>
+              <div className="agenda-arrow">→</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Slide2() {
+  const milestones = [
+    {
+      year: "2020 – 2021",
+      title: "The Genesis (ML & Automation)",
+      color: "var(--navy-light)",
+      desc: "Founded during our academic tenure at BITS Pilani. Began engineering Machine Learning algorithms and lean automation tools for early-stage clients, establishing our core focus on data integrity.",
+    },
+    {
+      year: "2022 – 2023",
+      title: "Incorporation & Market Expansion",
+      color: "var(--accent)",
+      desc: "Officially registered as an MSME. Expanded across the Indian market delivering custom SaaS portals (Yatn, i4option) and gained critical corporate exposure via the Instrive ecosystem.",
+    },
+    {
+      year: "2023 – Present",
+      title: "Global Enterprise Scale",
+      color: "var(--success)",
+      desc: "Scaled to a dedicated team of 11 (7 full-time, 4 specialized consultants). Transitioned to heavy enterprise solutions like AppsInfy and secured multi-year retention with international clients across San Francisco, Canada, and the US.",
+    },
+  ];
+
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Our Roots & Growth</div>
+      <h2 className="slide-title">From Automation to <span className="title-accent">Enterprise Engineering</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 24, maxWidth: 640, lineHeight: 1.65 }}>
+        What started as specialized ML tools developed by BITS Pilani colleagues has systematically grown into a global engineering firm. We pride ourselves on building decoupled architectures and maintaining long-term, multi-year client relationships.
+      </p>
+      
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))", gap: 16, marginBottom: 28 }}>
+        {milestones.map((m, i) => (
+          <div key={i} className="card" style={{ borderTop: `4px solid ${m.color}` }}>
+            <div className="card-body">
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: m.color, fontWeight: 600, marginBottom: 8 }}>{m.year}</div>
+              <h3 style={{ fontSize: 15, color: "var(--navy-dark)", marginBottom: 12 }}>{m.title}</h3>
+              <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.6 }}>{m.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="callout" style={{ alignItems: "center", justifyContent: "space-between", padding: "16px 20px" }}>
+        <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <div style={{ fontSize: 24 }}>🏛️</div>
+          <div>
+            <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 13, color: "var(--navy-dark)", marginBottom: 2 }}>
+              Official Registration & Compliance
+            </div>
+            <div className="callout-text" style={{ fontSize: 12 }}>
+              We are a fully compliant entity. View our MSME Registration, GST Details, and incorporation documents.
+            </div>
+          </div>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1ZrGVRaeN8_4PXsarfWVUxsrUkv9kxHTn?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ flexShrink: 0 }}>
+          View Drive Folder ↗
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function Slide3() {
+  const team = [
+    {
+      name: "Lalitha Varadarajulu", role: "Chief Data Architect",
+      cred: "M.Tech. Data Science & Engineering · BITS Pilani",
+      color: "var(--navy)",
+      desc: "Architecting the Gold Standard data foundation — unifying NAADI, Zoho, Tally, and rDash into a secure, integrated Azure Lakehouse.",
+    },
+    {
+      name: "Saran Kumar", role: "Senior ML Systems Architect",
+      cred: "M.Tech. AI & Machine Learning · BITS Pilani",
+      color: "var(--navy-light)",
+      desc: "Designing the mathematical brain and Vector Search engine that matches 2D floor plans to 3D historical assets with geometric precision.",
+    },
+    {
+      name: "Nandha Kumar", role: "CEO & Strategic Delivery Lead",
+      cred: "Solutions Architect · Executive Leadership",
+      color: "#2A6496",
+      desc: "Bridging luxury brand requirements and technical execution — ensuring the platform drives measurable ROI without operational disruption.",
+    },
+  ];
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Who We Are</div>
+      <h2 className="slide-title">Masters of <span className="title-accent">AI & Data Engineering</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 24, maxWidth: 620, lineHeight: 1.65 }}>
+        We bridge the gap between architectural creativity and enterprise-grade technology. Our leadership is backed by dual-specialization from BITS Pilani, ensuring world-class standards in data integrity, machine learning, and security.
+      </p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16 }}>
+        {team.map((m, i) => (
+          <div key={i} className="team-card">
+            <div className="team-card-header" style={{ background: m.color }}>
+              <div className="team-name">{m.name}</div>
+              <div className="team-role">{m.role}</div>
+            </div>
+            <div className="team-card-body">
+              <div className="cred-badge">🎓 {m.cred}</div>
+              <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.6 }}>{m.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Slide4() {
+  const projects = [
+    {
+      tag: "Enterprise Operations Integration", name: "AppsInfy", color: "var(--navy)",
+      problem: "Heavy-industry enterprises (Oil & Gas/Mining) struggling with disconnected legacy systems, manual workflows, and severe data silos causing compliance risks.",
+      solution: "Built a fully integrated digital operations platform (Go backend + Flutter hybrid app), unifying fragmented workflows into one interface tied securely to Windows Active Directory.",
+      result: "Eliminated data silos, replaced manual tracking with real-time operational visibility, and cut regulatory audit prep from multi-week manual hunts to instant, automated logs.",
+    },
+    {
+      tag: "AI & RAG Architecture", name: "Owlo & BeyondAsk", color: "var(--navy-light)",
+      problem: "Automating generation of highly accurate, context-aware information from massive, unstructured datasets.",
+      solution: "Architected a full-stack AI learning ecosystem using custom LangChain RAG models and unified Vector databases (pgvector) to process multimodal sources instantly.",
+      result: "Deployed a scalable Smart Routing system — automatically selecting the best LLM for specific tasks — while managing enterprise-grade security, latency, and costs.",
+    },
+  ];
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Track Record</div>
+      <h2 className="slide-title">Proven <span className="title-accent">Enterprise & AI Portfolio</span></h2>
+      <div className="divider" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 18 }}>
+        {projects.map((p, i) => (
+          <div key={i} className="card">
+            <div className="card-topbar" style={{ background: p.color }} />
+            <div className="card-body">
+              <span className="tag" style={{ marginBottom: 12, display: "block", width: "fit-content" }}>{p.tag}</span>
+              <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 18, color: p.color, marginBottom: 14 }}>{p.name}</div>
+              {[{label:"Problem",text:p.problem},{label:"Solution",text:p.solution},{label:"Result",text:p.result}].map((row, j) => (
+                <div key={j} className="proj-row">
+                  <div className="proj-row-label" style={{ color: j === 2 ? "var(--success)" : "var(--muted)" }}>{row.label}</div>
+                  <div className="proj-row-text" style={{ fontWeight: j === 2 ? 600 : 400 }}>{row.text}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Slide5() {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const clients = [
+    { 
+      name: "John Perumal", 
+      title: "Director of Infoflux Systems", 
+      url: "https://www.linkedin.com/in/mjohnperumal/",
+      desc: "Enterprise tech leadership executing complex digital transformations."
+    },
+    { 
+      name: "Harry Dhillon", 
+      title: "President/Founder at Ecko Worldwide Transportation", 
+      url: "https://www.linkedin.com/in/eckolimo/",
+      desc: "San Francisco-based multi-year partner leveraging custom HRMS & Logistics portals."
+    },
+    { 
+      name: "Benny A Daniel", 
+      title: "Specialist Occupational Therapist", 
+      url: "https://www.linkedin.com/in/benny-daniel-a8441652/",
+      desc: "Healthcare operations and specialized workflow integrations."
+    },
+    { 
+      name: "Saranya Ramamurthy", 
+      title: "Partner & COO of Pallathur Motors, LLP", 
+      url: "https://www.linkedin.com/in/dr-saranya-ramamurthy-b48b57198/",
+      desc: "Operational leadership driving automation in automotive and retail ecosystems."
+    }
+  ];
+
+  const activeClient = clients[activeIdx];
+  const initials = activeClient.name.split(" ").map(n => n[0]).join("");
+
+  return (
+    <div style={{ padding: "36px 40px", height: "100%", display: "flex", flexDirection: "column" }}>
+      <div className="section-eyebrow">Professional Network</div>
+      <h2 className="slide-title">Verified <span className="title-accent">Client References</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 20, maxWidth: 640, lineHeight: 1.65 }}>
+        We value transparency. Feel free to connect with our active clients to verify our delivery speed, communication standards, and technical reliability.
+      </p>
+
+      <div style={{ display: "flex", gap: 24, flex: 1, minHeight: 0 }}>
+        
+        {/* Left Col: Client List */}
+        <div style={{ flex: "0 0 35%", display: "flex", flexDirection: "column", gap: 8 }}>
+          {clients.map((c, i) => (
+            <button 
+              key={i} 
+              className={`client-item ${i === activeIdx ? "active" : ""}`}
+              onClick={() => setActiveIdx(i)}
+            >
+              <div className="client-name">{c.name}</div>
+              <div className="client-desc">{c.title}</div>
+            </button>
+          ))}
+        </div>
+
+        {/* Right Col: LinkedIn Profile Viewer */}
+        <div style={{ flex: 1 }}>
+          <div className="li-preview">
+            <div className="li-banner">
+              <div className="li-avatar">{initials}</div>
+            </div>
+            <div className="li-body">
+              <div className="li-name">
+                {activeClient.name} <span className="li-badge">in</span>
+              </div>
+              <div className="li-title">{activeClient.title}</div>
+              
+              <div style={{ fontSize: 13, color: "var(--text)", fontStyle: "italic", marginBottom: 16 }}>
+                "{activeClient.desc}"
+              </div>
+              
+              <div className="li-divider" />
+              
+              <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 16 }}>
+                <strong>Note:</strong> LinkedIn restricts live website embedding for security. Click below to securely view their full professional profile on LinkedIn.
+              </div>
+
+              <a href={activeClient.url} target="_blank" rel="noopener noreferrer" className="btn-linkedin">
+                Connect on LinkedIn ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+function Slide6() {
+  const challenges = [
+    {
+      num: "01", name: "The Unified Window",
+      desc: "Consolidating existing, disconnected software systems — Zoho, Tally, NAADI — into one seamless, single-pane-of-glass dashboard for ultimate operational control.",
+      systems: ["Zoho CRM", "Tally ERP", "NAADI", "rDash"],
+    },
+    {
+      num: "02", name: "The Intelligent Search",
+      desc: "Replacing rigid database queries with a Google-style AI engine capable of understanding natural language to retrieve precise, historical 3D design assets.",
+      systems: ["Natural Language", "Vector Search", "3D Asset DB", "Smart Routing"],
+    },
+  ];
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Core Challenges</div>
+      <h2 className="slide-title">The Vibrant Spaces <span className="title-accent">Technical Mandate</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 22, maxWidth: 540, lineHeight: 1.65 }}>
+        Moving from fragmented software to intelligent, centralized operations.
+      </p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(270px,1fr))", gap: 18, marginBottom: 18 }}>
+        {challenges.map((c, i) => (
+          <div key={i} className="challenge-card">
+            <div className="challenge-header">
+              <div className="challenge-num">{c.num}</div>
+              <div className="challenge-name">{c.name}</div>
+            </div>
+            <div style={{ padding: "16px 22px" }}>
+              <p style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.65, marginBottom: 14 }}>{c.desc}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {c.systems.map((s, j) => <span key={j} className="tag">{s}</span>)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="callout">
+        <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>💡</span>
+        <div className="callout-text">
+          Both challenges require a <strong>single unified backend</strong> — an Azure Lakehouse that feeds both the dashboard and the AI query engine simultaneously.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SearchDemo() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState("");
+  const run = async () => {
+    if (!query.trim()) return;
+    setResults([]); setLoading(true);
+    const stages = ["Vectorizing query…","Routing via GPT-4o…","Scanning pgvector index…","Ranking by geometric similarity…"];
+    for (const s of stages) { setStage(s); await new Promise(r => setTimeout(r, 420)); }
+    setLoading(false); setStage(""); setResults(DEMO_RESULTS);
+  };
+  return (
+    <div className="search-container">
+      <div className="search-label"><div className="live-dot" /> Live Demo — AI Query Engine</div>
+      <div className="search-bar">
+        <input className="search-input" value={query} onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && run()}
+          placeholder='e.g. "L-shaped modular sofa for 400 sq ft living room"' />
+        <button className="search-btn" onClick={run}>Search</button>
+      </div>
+      {loading && <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}><div className="spinner" /><span className="status-text">{stage}</span></div>}
+      {results.length > 0 && (
+        <div style={{ marginTop: 4 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)", marginBottom: 4, marginTop: 10 }}>
+            {results.length} assets matched · ordered by geometric similarity
+          </div>
+          {results.map((r, i) => (
+            <div key={i} className="result-row" style={{ animationDelay: `${i * 0.08}s` }}>
+              <div className="result-icon">{r.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div className="result-title">{r.title}</div>
+                <div className="result-tags">{r.tags.map((t, j) => <span key={j} className="result-tag">{t}</span>)}</div>
+              </div>
+              <div className="result-score">{r.match}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Slide7() {
+  const steps = [
+    { n: 1, title: "Vector Embeddings", desc: "Historical design assets and floor plans are converted into mathematical coordinates (vectors) — enabling geometric comparison at machine speed." },
+    { n: 2, title: "Semantic Understanding", desc: "Our Smart Routing engine (leveraging models like GPT-4o) understands the intent and geometry behind the words — not just the spelling." },
+    { n: 3, title: "High-Precision Matching", desc: "Using pgvector, the system retrieves the exact 3D asset matching the 2D requirement instantly, eliminating hours of manual digging." },
+  ];
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">The AI Engine</div>
+      <h2 className="slide-title">Making the Impossible Possible: <span className="title-accent">The AI Query Engine</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 18, maxWidth: 560, lineHeight: 1.65 }}>
+        Traditional databases look for exact text matches. We don't use traditional searches.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+        {steps.map((s, i) => (
+          <div key={i} className="step-row">
+            <div className="step-num-box">{s.n}</div>
+            <div><div className="step-title">{s.title}</div>
+            <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.6 }}>{s.desc}</p></div>
+          </div>
+        ))}
+      </div>
+      <SearchDemo />
+    </div>
+  );
+}
+
+function Slide8() {
+  const deliverables = [
+    { icon: "🛡️", title: "Technical Debt Prevention", text: "Discovering a mismatch in NAADI's factory logic after building the AI would cost lakhs in rework. We identify it now — before a single line of production code is written." },
+    { icon: "🔗", title: "Security & Integration Mapping", text: "Identifying exact data flow vulnerabilities between Zoho, Tally, and the proposed Azure Lakehouse — with a remediation roadmap included." },
+    { icon: "💎", title: "Investment Protection", text: "Spending ₹50K now ensures your ₹15L+ production budget is spent on a foundation that is guaranteed to execute — not on expensive course-corrections." },
+  ];
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Engagement Structure</div>
+      <h2 className="slide-title">Phase 0: <span className="title-accent">The ₹50K Architecture Audit</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 20, maxWidth: 580, lineHeight: 1.65 }}>
+        <strong style={{ color: "var(--text)" }}>Professional Technical Engagement to Eliminate Project Risk.</strong> Most enterprise software initiatives fail due to <em>Data Friction</em> — systems that don't talk to each other or messy historical files.
+      </p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 12, marginBottom: 18 }}>
+        {deliverables.map((d, i) => (
+          <div key={i} className="deliverable-card">
+            <div className="del-icon-box">{d.icon}</div>
+            <div><div className="del-title">{d.title}</div><div className="del-text">{d.text}</div></div>
+          </div>
+        ))}
+      </div>
+      <div className="fee-box">
+        <div>
+          <div className="fee-label">14-Day Deliverable · Fixed Scope · Fixed Fee</div>
+          <div className="fee-desc">Architecture Blueprint + API Strategy + Phase 1 Production Proposal</div>
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 600, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginBottom: 3 }}>Total (incl. 18% GST)</div>
+          <div className="fee-amount">₹59,000</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Slide9() {
+  const [checked, setChecked] = useState([false, false, false, false]);
+  const actions = [
+    { action: "Approval of the Phase 0 Audit Proposal", owner: "Vibrant Spaces Leadership", day: "Day 1" },
+    { action: "Signing of NDA", owner: "Both Parties", day: "Day 1" },
+    { action: "Provision of Read-Only system access to relevant databases/APIs", owner: "Vibrant Spaces IT Team", day: "Day 2–3" },
+    { action: "Day-1 Kickoff of the 14-Day Technical Audit", owner: "Inzeph Engineering Team", day: "Day 3" },
+  ];
+  const toggle = i => setChecked(c => { const n = [...c]; n[i] = !n[i]; return n; });
+  return (
+    <div style={{ padding: "36px 40px" }}>
+      <div className="section-eyebrow">Let's Begin</div>
+      <h2 className="slide-title">Immediate <span className="title-accent">Next Steps</span></h2>
+      <div className="divider" />
+      <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 20, maxWidth: 500 }}>Click each item to track confirmation status.</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 9, maxWidth: 680, marginBottom: 24 }}>
+        {actions.map((a, i) => (
+          <div key={i} className={`action-row ${checked[i] ? "done" : ""}`} onClick={() => toggle(i)}>
+            <div className={`checkbox ${checked[i] ? "done" : ""}`}>&#10003;</div>
+            <div style={{ flex: 1 }}>
+              <div className={`action-text ${checked[i] ? "done" : ""}`}>{a.action}</div>
+              <div className="action-owner">{a.owner}</div>
+            </div>
+            <div className="day-tag">{a.day}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+        <button className="btn-primary">Proceed to Phase 0 →</button>
+        <button className="btn-outline">Download Proposal</button>
+        <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 4 }}>
+          Questions? <strong style={{ color: "var(--navy)" }}>contact@inzeph.com</strong>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// Added Slide5 into the components array
+const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, Slide9];
+
+export default function App() {
+  const [current, setCurrent] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
+
+  const goTo = idx => {
+    if (idx < 0 || idx >= SLIDES_COMPS.length) return;
+    setCurrent(idx); setAnimKey(k => k + 1);
+  };
+
+  useEffect(() => {
+    const h = e => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") goTo(current + 1);
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") goTo(current - 1);
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [current]);
+
+  const SlideComp = SLIDES_COMPS[current];
+  const progress = ((current + 1) / SLIDES_COMPS.length) * 100;
+
+  return (
+    <>
+      <style>{STYLES}</style>
+      <div className="root">
+        <div className="topbar">
+          <div className="logo">IN<span>ZEPH</span>
+            <span style={{ fontWeight: 400, fontSize: 10, color: "rgba(255,255,255,0.3)", marginLeft: 8, letterSpacing: "0.06em" }}>
+              × VIBRANT SPACES
+            </span>
+          </div>
+          <div className="nav-dots">
+            {SLIDES_COMPS.map((_, i) => (
+              <button key={i} className={`dot ${i === current ? "active" : ""}`} onClick={() => goTo(i)} title={SLIDE_LABELS[i]} />
+            ))}
+          </div>
+          <div className="slide-counter">{String(current + 1).padStart(2,"0")} / {String(SLIDES_COMPS.length).padStart(2,"0")}</div>
+        </div>
+
+        <div className="slide-wrap">
+          <div key={animKey} className="slide-body">
+            <SlideComp goTo={goTo} />
+          </div>
+          {current > 0 && <button className="arrow-btn" style={{ left: 8 }} onClick={() => goTo(current - 1)}>&#8249;</button>}
+          {current < SLIDES_COMPS.length - 1 && <button className="arrow-btn" style={{ right: 8 }} onClick={() => goTo(current + 1)}>&#8250;</button>}
+        </div>
+
+        <div className="bottombar">
+          <div className="slide-label">{SLIDE_LABELS[current]}</div>
+          <div className="progress-track"><div className="progress-fill" style={{ width: `${progress}%` }} /></div>
+          <div className="nav-hint">← → to navigate</div>
+        </div>
+      </div>
+    </>
+  );
+}
