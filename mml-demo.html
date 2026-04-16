@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeWatch AI — Factory Intelligence Platform | Inzeph</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1B3F7E;
+      --navy-dark: #122D5E;
+      --navy-light: #2752A3;
+      --accent: #E8861A;
+      --bg-dark: #0B0F1A;
+      --bg-panel: #111827;
+      --bg-card: #1A2235;
+      --border: #1E2D45;
+      --border-bright: #2A3F60;
+      --text: #E2EAF8;
+      --muted: #6B82A8;
+      --safe: #16A34A;
+      --safe-dim: #14532D;
+      --warn: #E8861A;
+      --warn-dim: #7C3200;
+      --crit: #DC2626;
+      --crit-dim: #7F1D1D;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-head: 'Montserrat', sans-serif;
+      --font-body: 'Source Sans 3', sans-serif;
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow: hidden;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: linear-gradient(90deg, #163672 0%, #1e4896 100%);
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 2px solid var(--accent);
+      flex-shrink: 0;
+      z-index: 10;
+      position: relative;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .logo { font-family: var(--font-head); font-weight: 800; font-size: 15px; color: white; letter-spacing: 0.06em; }
+    .logo span { color: var(--accent); }
+    .divider-v { width: 1px; height: 20px; background: rgba(255,255,255,0.18); }
+    .product-name { font-family: var(--font-head); font-weight: 700; font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(22,163,74,0.15); border: 1px solid rgba(22,163,74,0.4);
+      border-radius: 4px; padding: 4px 10px;
+      font-family: var(--font-mono); font-size: 10px; color: #4ADE80;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .live-dot { width: 6px; height: 6px; background: #4ADE80; border-radius: 50%; animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .shift-info { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 190px 1fr 270px;
+      grid-template-rows: 1fr;
+      height: calc(100vh - 46px - 44px);
+      gap: 0;
+    }
+
+    /* ── LEFT: CAMERA GRID ── */
+    .cam-sidebar {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .cam-sidebar-header {
+      padding: 10px 12px 8px;
+      font-family: var(--font-head); font-weight: 700; font-size: 9px;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .cam-tiles { display: flex; flex-direction: column; gap: 0; flex: 1; }
+    .cam-tile {
+      position: relative; cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      height: 25%;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .cam-tile.active { border-left: 3px solid var(--accent); }
+    .cam-tile:hover { background: rgba(255,255,255,0.03); }
+    .cam-tile-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #0a1020 0%, #111827 100%);
+    }
+    .cam-tile-bg.cam2 { background: linear-gradient(135deg, #0a1520 0%, #0d1f2d 100%); }
+    .cam-tile-bg.cam3 { background: linear-gradient(135deg, #150a0a 0%, #1f0d0d 100%); }
+    .cam-tile-bg.cam4 { background: linear-gradient(135deg, #0a150a 0%, #0d1f0d 100%); }
+    .cam-noise {
+      position: absolute; inset: 0; opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 80px 80px;
+    }
+    .cam-tile-overlay {
+      position: absolute; inset: 0;
+      padding: 6px 8px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .cam-label {
+      font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+      color: rgba(255,255,255,0.7); letter-spacing: 0.08em;
+      background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 2px;
+      display: inline-block; width: fit-content;
+    }
+    .cam-status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--safe); box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      margin-left: auto;
+    }
+    .cam-status-dot.warn { background: var(--warn); box-shadow: 0 0 6px rgba(232,134,26,0.6); }
+    .cam-status-dot.crit { background: var(--crit); box-shadow: 0 0 6px rgba(220,38,38,0.6); animation: blink 0.6s ease-in-out infinite; }
+    .cam-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .cam-event-text {
+      font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.35);
+      max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .cam-location {
+      font-family: var(--font-head); font-size: 8.5px; font-weight: 600;
+      color: rgba(255,255,255,0.35); letter-spacing: 0.04em;
+    }
+
+    /* ── CENTER: MAIN VIEW ── */
+    .main-view {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050810;
+      overflow: hidden;
+    }
+    #video {
+      position: absolute;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      display: none;
+    }
+    #canvas {
+      position: absolute;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      display: none;
+    }
+    .scanline {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      z-index: 2;
+      display: none;
+    }
+    .cam-corner {
+      position: absolute; width: 18px; height: 18px;
+      border-color: var(--accent); border-style: solid; opacity: 0.7;
+      z-index: 3; display: none;
+    }
+    .cam-corner.tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+    .cam-corner.tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+    .cam-corner.bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
+    .cam-corner.br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+    .cam-label-overlay {
+      position: absolute; top: 12px; left: 36px; z-index: 4;
+      font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.6);
+      letter-spacing: 0.08em; display: none;
+    }
+    .fps-overlay {
+      position: absolute; top: 12px; right: 36px; z-index: 4;
+      font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.5);
+      letter-spacing: 0.06em; display: none;
+    }
+    .risk-overlay {
+      position: absolute; bottom: 60px; left: 12px; z-index: 4;
+      display: none;
+    }
+    .risk-chip {
+      font-family: var(--font-head); font-weight: 800; font-size: 13px;
+      padding: 5px 12px; border-radius: 4px; letter-spacing: 0.06em;
+      background: rgba(22,163,74,0.2); border: 1px solid rgba(22,163,74,0.5);
+      color: #4ADE80;
+      transition: all 0.4s;
+    }
+    .risk-chip.warn { background: rgba(232,134,26,0.2); border-color: rgba(232,134,26,0.5); color: var(--warn); }
+    .risk-chip.crit { background: rgba(220,38,38,0.2); border-color: rgba(220,38,38,0.5); color: #F87171; }
+
+    /* Start screen */
+    #start-screen {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, #0d1730 0%, #050810 100%);
+      gap: 20px;
+    }
+    .start-icon { font-size: 48px; opacity: 0.7; }
+    .start-title {
+      font-family: var(--font-head); font-weight: 800; font-size: 22px;
+      color: white; text-align: center; letter-spacing: 0.02em;
+    }
+    .start-sub {
+      font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+      text-align: center; letter-spacing: 0.06em; max-width: 340px; line-height: 1.7;
+    }
+    .start-btn {
+      background: linear-gradient(135deg, #163672, #2350A0);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white; font-family: var(--font-head); font-weight: 700; font-size: 13px;
+      letter-spacing: 0.06em; padding: 14px 36px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 24px rgba(22,54,114,0.5);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .start-btn:hover { background: linear-gradient(135deg, #1e4896, #2d5fc0); transform: translateY(-1px); }
+    .tech-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .tech-tag {
+      font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      padding: 4px 9px; border-radius: 3px; letter-spacing: 0.08em;
+    }
+
+    /* Loading screen */
+    #loading-screen {
+      position: absolute; inset: 0; z-index: 11;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, #0d1730 0%, #050810 100%);
+      gap: 16px;
+    }
+    .loader-ring {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(255,255,255,0.06);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-stage {
+      font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+      letter-spacing: 0.08em; text-align: center;
+    }
+    .loader-bar-wrap { width: 240px; height: 2px; background: rgba(255,255,255,0.06); border-radius: 2px; }
+    .loader-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width 0.5s ease; }
+
+    /* Metrics strip */
+    .metrics-strip {
+      height: 44px; background: var(--bg-panel); border-top: 1px solid var(--border);
+      display: flex; align-items: stretch;
+      flex-shrink: 0;
+    }
+    .metric-cell {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-right: 1px solid var(--border); padding: 4px 8px;
+      gap: 1px;
+    }
+    .metric-cell:last-child { border-right: none; }
+    .metric-label { font-family: var(--font-head); font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+    .metric-val { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--text); }
+    .metric-val.safe { color: #4ADE80; }
+    .metric-val.warn { color: var(--warn); }
+    .metric-val.crit { color: #F87171; }
+
+    /* ── RIGHT: RISK PANEL ── */
+    .risk-panel {
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-section { padding: 12px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .panel-section-title {
+      font-family: var(--font-head); font-weight: 700; font-size: 8.5px;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* Risk gauge */
+    .gauge-wrap { display: flex; align-items: center; gap: 14px; }
+    .gauge-circle {
+      position: relative; width: 76px; height: 76px; flex-shrink: 0;
+    }
+    .gauge-svg { width: 76px; height: 76px; transform: rotate(-90deg); }
+    .gauge-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 7; }
+    .gauge-arc { fill: none; stroke: var(--safe); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 188; stroke-dashoffset: 188; transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease; }
+    .gauge-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .gauge-num { font-family: var(--font-head); font-weight: 800; font-size: 20px; color: var(--text); line-height: 1; }
+    .gauge-unit { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; margin-top: 1px; }
+    .gauge-right { flex: 1; }
+    .risk-level-badge {
+      display: inline-block;
+      font-family: var(--font-head); font-weight: 800; font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 4px;
+      background: rgba(22,163,74,0.15); border: 1px solid rgba(22,163,74,0.35);
+      color: #4ADE80; margin-bottom: 8px; transition: all 0.4s;
+    }
+    .risk-level-badge.warn { background: rgba(232,134,26,0.15); border-color: rgba(232,134,26,0.35); color: var(--warn); }
+    .risk-level-badge.crit { background: rgba(220,38,38,0.15); border-color: rgba(220,38,38,0.35); color: #F87171; }
+    .joint-rows { display: flex; flex-direction: column; gap: 5px; }
+    .joint-row { display: flex; align-items: center; gap: 8px; }
+    .joint-name { font-family: var(--font-mono); font-size: 9px; color: var(--muted); width: 72px; flex-shrink: 0; }
+    .joint-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .joint-bar-fill { height: 100%; width: 0%; border-radius: 2px; background: var(--safe); transition: width 0.5s ease, background 0.4s ease; }
+    .joint-deg { font-family: var(--font-mono); font-size: 9px; color: var(--muted); width: 30px; text-align: right; }
+
+    /* Alert log */
+    .alert-log-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    .alert-log-header {
+      padding: 10px 14px 8px; flex-shrink: 0;
+      font-family: var(--font-head); font-weight: 700; font-size: 8.5px;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .alert-count {
+      font-family: var(--font-mono); font-size: 9px;
+      background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3);
+      color: #F87171; padding: 2px 7px; border-radius: 3px;
+    }
+    .alert-scroll { flex: 1; overflow-y: auto; padding: 6px 8px; }
+    .alert-scroll::-webkit-scrollbar { width: 3px; }
+    .alert-scroll::-webkit-scrollbar-track { background: transparent; }
+    .alert-scroll::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+    .alert-item {
+      padding: 7px 8px; border-radius: 5px; margin-bottom: 5px;
+      border-left: 2px solid var(--safe);
+      background: rgba(22,163,74,0.05);
+      animation: slideIn 0.25s ease;
+    }
+    .alert-item.warn { border-color: var(--warn); background: rgba(232,134,26,0.07); }
+    .alert-item.crit { border-color: var(--crit); background: rgba(220,38,38,0.08); }
+    @keyframes slideIn { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:translateX(0); } }
+    .alert-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+    .alert-event { font-family: var(--font-body); font-weight: 600; font-size: 11px; color: var(--text); }
+    .alert-time { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+    .alert-cam { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+
+    /* ── BOTTOM BAR ── */
+    .bottombar {
+      height: 44px;
+      background: linear-gradient(90deg, #163672 0%, #1e4896 100%);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .bottom-stat { display: flex; align-items: center; gap: 8px; }
+    .bottom-stat-label { font-family: var(--font-head); font-weight: 700; font-size: 8px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.38); }
+    .bottom-stat-val { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.85); }
+    .bottom-stat-val.safe { color: #4ADE80; }
+    .bottom-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.1); }
+    .bottom-right { font-family: var(--font-mono); font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; }
+
+    /* error screen */
+    #error-screen {
+      position: absolute; inset: 0; z-index: 12;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, #1a0d0d 0%, #050810 100%);
+      gap: 12px;
+    }
+    .error-icon { font-size: 36px; opacity: 0.7; }
+    .error-title { font-family: var(--font-head); font-weight: 700; font-size: 16px; color: #F87171; }
+    .error-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-align: center; max-width: 300px; line-height: 1.7; }
+    .retry-btn {
+      background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3);
+      color: #F87171; font-family: var(--font-head); font-weight: 700; font-size: 11px;
+      padding: 9px 22px; border-radius: 5px; cursor: pointer; transition: all 0.2s;
+    }
+    .retry-btn:hover { background: rgba(220,38,38,0.25); }
+  </style>
+</head>
+<body>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">IN<span>ZEPH</span></div>
+      <div class="divider-v"></div>
+      <div class="product-name">SafeWatch AI &mdash; Factory Intelligence Platform</div>
+    </div>
+    <div class="topbar-right">
+      <div class="shift-info" id="shift-clock">SHIFT A &nbsp;|&nbsp; --:--:--</div>
+      <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="layout">
+
+    <!-- LEFT: Camera thumbnails -->
+    <div class="cam-sidebar">
+      <div class="cam-sidebar-header">Camera Grid &mdash; 4 Feeds</div>
+      <div class="cam-tiles">
+
+        <!-- CAM-01: active/live -->
+        <div class="cam-tile active" onclick="selectCam(1)">
+          <div class="cam-tile-bg"></div>
+          <div class="cam-noise"></div>
+          <div class="cam-tile-overlay">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="cam-label">CAM-01</div>
+              <div class="cam-status-dot" id="dot1"></div>
+            </div>
+            <div class="cam-bottom">
+              <div class="cam-location">Assembly Line A</div>
+              <div class="cam-event-text" id="evt1">Monitoring active</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAM-02 -->
+        <div class="cam-tile" onclick="selectCam(2)">
+          <div class="cam-tile-bg cam2"></div>
+          <div class="cam-noise"></div>
+          <div class="cam-tile-overlay">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="cam-label">CAM-02</div>
+              <div class="cam-status-dot" id="dot2"></div>
+            </div>
+            <div class="cam-bottom">
+              <div class="cam-location">Loading Dock</div>
+              <div class="cam-event-text" id="evt2">Normal</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAM-03 -->
+        <div class="cam-tile" onclick="selectCam(3)">
+          <div class="cam-tile-bg cam3"></div>
+          <div class="cam-noise"></div>
+          <div class="cam-tile-overlay">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="cam-label">CAM-03</div>
+              <div class="cam-status-dot" id="dot3"></div>
+            </div>
+            <div class="cam-bottom">
+              <div class="cam-location">Heavy Machinery</div>
+              <div class="cam-event-text" id="evt3">Normal</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAM-04 -->
+        <div class="cam-tile" onclick="selectCam(4)">
+          <div class="cam-tile-bg cam4"></div>
+          <div class="cam-noise"></div>
+          <div class="cam-tile-overlay">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="cam-label">CAM-04</div>
+              <div class="cam-status-dot" id="dot4"></div>
+            </div>
+            <div class="cam-bottom">
+              <div class="cam-location">Exit Corridor</div>
+              <div class="cam-event-text" id="evt4">Normal</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CENTER: Main view -->
+    <div class="main-view">
+      <div class="video-wrap" id="video-wrap">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+
+        <!-- Overlay UI elements (shown after camera starts) -->
+        <div class="scanline" id="scanline"></div>
+        <div class="cam-corner tl" id="corner-tl"></div>
+        <div class="cam-corner tr" id="corner-tr"></div>
+        <div class="cam-corner bl" id="corner-bl"></div>
+        <div class="cam-corner br" id="corner-br"></div>
+        <div class="cam-label-overlay" id="cam-label-overlay">CAM-01 &nbsp;|&nbsp; ASSEMBLY LINE A</div>
+        <div class="fps-overlay" id="fps-overlay">30 FPS &nbsp;|&nbsp; 1080p &nbsp;|&nbsp; BlazePose</div>
+        <div class="risk-overlay" id="risk-overlay">
+          <div class="risk-chip" id="risk-chip">&#9646; POSTURE NORMAL</div>
+        </div>
+
+        <!-- Start screen -->
+        <div id="start-screen">
+          <div class="start-icon">🏭</div>
+          <div class="start-title">Worker Safety Intelligence</div>
+          <div class="start-sub">
+            Real-time skeletal pose estimation via MediaPipe BlazePose.<br>
+            Detects posture risk, fatigue, and anomalous movement — live on your factory floor.
+          </div>
+          <button class="start-btn" onclick="startMonitoring()">
+            <span>▶</span> Start Live Inference
+          </button>
+          <div class="tech-tags">
+            <div class="tech-tag">MediaPipe BlazePose</div>
+            <div class="tech-tag">33-Point Skeleton</div>
+            <div class="tech-tag">Edge Processing</div>
+            <div class="tech-tag">Sub-second Inference</div>
+            <div class="tech-tag">Zero Cloud Dependency</div>
+          </div>
+        </div>
+
+        <!-- Loading screen -->
+        <div id="loading-screen">
+          <div class="loader-ring"></div>
+          <div class="loader-stage" id="loader-stage">Initializing edge server...</div>
+          <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+        </div>
+
+        <!-- Error screen -->
+        <div id="error-screen">
+          <div class="error-icon">⚠️</div>
+          <div class="error-title">Camera Access Required</div>
+          <div class="error-sub">Please allow camera access in your browser to run the live inference demo. This demo runs 100% on-device — no video is sent to any server.</div>
+          <button class="retry-btn" onclick="startMonitoring()">Retry Camera Access</button>
+        </div>
+      </div>
+
+      <!-- Metrics strip -->
+      <div class="metrics-strip">
+        <div class="metric-cell">
+          <div class="metric-label">Spine Angle</div>
+          <div class="metric-val" id="m-spine">--°</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Shoulder Tilt</div>
+          <div class="metric-val" id="m-shoulder">--°</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Head Forward</div>
+          <div class="metric-val" id="m-head">--</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Detection</div>
+          <div class="metric-val safe" id="m-detect">Waiting</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Inference</div>
+          <div class="metric-val" id="m-inference">--ms</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Model</div>
+          <div class="metric-val" style="font-size:10px;color:var(--muted);">BlazePose Lite</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Risk panel -->
+    <div class="risk-panel">
+
+      <!-- Risk gauge -->
+      <div class="panel-section">
+        <div class="panel-section-title">Live Risk Score &mdash; CAM-01</div>
+        <div class="gauge-wrap">
+          <div class="gauge-circle">
+            <svg class="gauge-svg" viewBox="0 0 76 76">
+              <circle class="gauge-bg" cx="38" cy="38" r="30"/>
+              <circle class="gauge-arc" id="gauge-arc" cx="38" cy="38" r="30"/>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-num" id="gauge-num">--</div>
+              <div class="gauge-unit">/ 100</div>
+            </div>
+          </div>
+          <div class="gauge-right">
+            <div class="risk-level-badge" id="risk-badge">WAITING</div>
+            <div class="joint-rows">
+              <div class="joint-row">
+                <div class="joint-name">Spine</div>
+                <div class="joint-bar-track"><div class="joint-bar-fill" id="bar-spine"></div></div>
+                <div class="joint-deg" id="deg-spine">--</div>
+              </div>
+              <div class="joint-row">
+                <div class="joint-name">Shoulders</div>
+                <div class="joint-bar-track"><div class="joint-bar-fill" id="bar-shoulder"></div></div>
+                <div class="joint-deg" id="deg-shoulder">--</div>
+              </div>
+              <div class="joint-row">
+                <div class="joint-name">Head</div>
+                <div class="joint-bar-track"><div class="joint-bar-fill" id="bar-head"></div></div>
+                <div class="joint-deg" id="deg-head">--</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Worker status -->
+      <div class="panel-section" style="padding:10px 14px;">
+        <div class="panel-section-title">Worker Status</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;">
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-bottom:3px;">WORKER ID</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--text);" id="worker-id">W-0041</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;">
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-bottom:3px;">SHIFT TIME</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--text);" id="shift-elapsed">00:00:00</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;">
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-bottom:3px;">ALERTS TODAY</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--text);" id="alerts-today">0</div>
+          </div>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;">
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-bottom:3px;">STATUS</div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:#4ADE80;" id="worker-status">Active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert log -->
+      <div class="alert-log-wrap">
+        <div class="alert-log-header">
+          <span>Alert Log</span>
+          <span class="alert-count" id="alert-count">0 Events</span>
+        </div>
+        <div class="alert-scroll" id="alert-scroll">
+          <div style="text-align:center;padding:24px 0;font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.08em;" id="no-alerts">
+            Awaiting inference stream...
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottombar">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Active Workers</div>
+        <div class="bottom-stat-val safe">12</div>
+      </div>
+      <div class="bottom-divider"></div>
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Risk Events Today</div>
+        <div class="bottom-stat-val" id="b-events">0</div>
+      </div>
+      <div class="bottom-divider"></div>
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Cameras Online</div>
+        <div class="bottom-stat-val safe">4 / 4</div>
+      </div>
+      <div class="bottom-divider"></div>
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Avg Response</div>
+        <div class="bottom-stat-val safe">&lt; 1s</div>
+      </div>
+      <div class="bottom-divider"></div>
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Edge Server</div>
+        <div class="bottom-stat-val safe">RTX 4080 ●</div>
+      </div>
+    </div>
+    <div class="bottom-right">INZEPH SAFEWATCH AI &nbsp;|&nbsp; EDGE INFERENCE ENGINE v2.4.1</div>
+  </div>
+
+  <script>
+    // ── STATE ──
+    let poseInstance = null;
+    let cameraInstance = null;
+    let alertCount = 0;
+    let riskEventCount = 0;
+    let monitoringStartTime = null;
+    let lastInferenceTime = performance.now();
+    let lastRiskLevel = 'safe';
+
+    // ── CLOCK ──
+    function padZ(n) { return String(n).padStart(2, '0'); }
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('shift-clock').textContent =
+        `SHIFT A  |  ${padZ(now.getHours())}:${padZ(now.getMinutes())}:${padZ(now.getSeconds())}`;
+      if (monitoringStartTime) {
+        const elapsed = Math.floor((Date.now() - monitoringStartTime) / 1000);
+        const h = Math.floor(elapsed / 3600);
+        const m = Math.floor((elapsed % 3600) / 60);
+        const s = elapsed % 60;
+        document.getElementById('shift-elapsed').textContent = `${padZ(h)}:${padZ(m)}:${padZ(s)}`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ── CAM SELECTION (tiles, future extension) ──
+    function selectCam(n) {
+      document.querySelectorAll('.cam-tile').forEach((t, i) => {
+        t.classList.toggle('active', i + 1 === n);
+      });
+    }
+
+    // ── LOADING SEQUENCE ──
+    const LOAD_STAGES = [
+      { text: 'Requesting camera access...', pct: 12 },
+      { text: 'Loading BlazePose model (33-point skeleton)...', pct: 35 },
+      { text: 'Initializing TensorRT pipeline...', pct: 58 },
+      { text: 'Calibrating pose estimator...', pct: 78 },
+      { text: 'Launching edge inference engine...', pct: 92 },
+      { text: 'Live inference active ✓', pct: 100 },
+    ];
+
+    function showLoading() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('loading-screen').style.display = 'flex';
+    }
+
+    async function runLoadingSequence() {
+      const stageEl = document.getElementById('loader-stage');
+      const barEl = document.getElementById('loader-bar');
+      for (const stage of LOAD_STAGES) {
+        stageEl.textContent = stage.text;
+        barEl.style.width = stage.pct + '%';
+        await new Promise(r => setTimeout(r, 420));
+      }
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    // ── RISK COMPUTATION ──
+    function computeRisk(landmarks) {
+      const ls = landmarks[11], rs = landmarks[12];   // shoulders
+      const lh = landmarks[23], rh = landmarks[24];   // hips
+      const nose = landmarks[0];
+      const le = landmarks[13], re = landmarks[14];   // knees (ears→knees swap intentional for visibility)
+
+      const smx = (ls.x + rs.x) / 2, smy = (ls.y + rs.y) / 2;
+      const hmx = (lh.x + rh.x) / 2, hmy = (lh.y + rh.y) / 2;
+
+      // Spine angle from vertical
+      const dx = smx - hmx, dy = smy - hmy;
+      const spineAngle = Math.abs(Math.atan2(dx, -dy) * 180 / Math.PI);
+
+      // Shoulder asymmetry
+      const shoulderTilt = Math.abs(ls.y - rs.y) * 180;
+
+      // Head forward lean (normalized)
+      const headForward = Math.max(0, Math.abs(nose.x - smx) - 0.02) * 300;
+
+      // Scores
+      let spineScore = 0;
+      if (spineAngle > 45) spineScore = 70;
+      else if (spineAngle > 30) spineScore = 45;
+      else if (spineAngle > 18) spineScore = 20;
+      else spineScore = Math.max(0, spineAngle * 0.5);
+
+      let shoulderScore = Math.min(30, shoulderTilt * 1.5);
+      let headScore = Math.min(25, headForward);
+
+      const total = Math.min(100, Math.round(spineScore + shoulderScore * 0.5 + headScore * 0.5));
+
+      let level = 'safe', color = '#16A34A', arcColor = '#22C55E';
+      if (total >= 68) { level = 'crit'; color = '#DC2626'; arcColor = '#F87171'; }
+      else if (total >= 38) { level = 'warn'; color = '#E8861A'; arcColor = '#FB923C'; }
+
+      return {
+        total,
+        spineAngle: Math.round(spineAngle),
+        shoulderTilt: Math.round(shoulderTilt),
+        headForward: Math.round(Math.min(100, headForward)),
+        level, color, arcColor,
+        spineScore: Math.round(spineScore),
+        shoulderScore: Math.round(shoulderScore),
+        headScore: Math.round(headScore),
+      };
+    }
+
+    // ── UPDATE UI FROM RISK ──
+    function updateRiskUI(risk) {
+      // Gauge
+      const arc = document.getElementById('gauge-arc');
+      const circumference = 188;
+      const offset = circumference - (risk.total / 100) * circumference;
+      arc.style.strokeDashoffset = offset;
+      arc.style.stroke = risk.arcColor;
+
+      document.getElementById('gauge-num').textContent = risk.total;
+
+      const badge = document.getElementById('risk-badge');
+      badge.textContent = risk.level === 'safe' ? 'LOW RISK' : risk.level === 'warn' ? 'MODERATE' : 'CRITICAL';
+      badge.className = 'risk-level-badge' + (risk.level !== 'safe' ? ' ' + risk.level : '');
+
+      // Joint bars
+      const spineBarPct = Math.min(100, risk.spineAngle * 2);
+      document.getElementById('bar-spine').style.width = spineBarPct + '%';
+      document.getElementById('bar-spine').style.background = spineBarPct > 80 ? '#F87171' : spineBarPct > 50 ? '#FB923C' : '#22C55E';
+      document.getElementById('deg-spine').textContent = risk.spineAngle + '°';
+
+      const shoulderBarPct = Math.min(100, risk.shoulderTilt);
+      document.getElementById('bar-shoulder').style.width = shoulderBarPct + '%';
+      document.getElementById('bar-shoulder').style.background = shoulderBarPct > 70 ? '#F87171' : shoulderBarPct > 40 ? '#FB923C' : '#22C55E';
+      document.getElementById('deg-shoulder').textContent = risk.shoulderTilt + '°';
+
+      document.getElementById('bar-head').style.width = risk.headForward + '%';
+      document.getElementById('bar-head').style.background = risk.headForward > 70 ? '#F87171' : risk.headForward > 40 ? '#FB923C' : '#22C55E';
+      document.getElementById('deg-head').textContent = risk.headForward;
+
+      // Metrics strip
+      document.getElementById('m-spine').textContent = risk.spineAngle + '°';
+      document.getElementById('m-spine').className = 'metric-val' + (risk.spineAngle > 40 ? ' crit' : risk.spineAngle > 25 ? ' warn' : ' safe');
+      document.getElementById('m-shoulder').textContent = risk.shoulderTilt + '°';
+      document.getElementById('m-head').textContent = risk.headForward + '%';
+
+      const infTime = Math.round(performance.now() - lastInferenceTime);
+      lastInferenceTime = performance.now();
+      document.getElementById('m-inference').textContent = Math.min(infTime, 99) + 'ms';
+
+      // Risk overlay chip
+      const chip = document.getElementById('risk-chip');
+      if (risk.level === 'safe') {
+        chip.textContent = '■ POSTURE NORMAL';
+        chip.className = 'risk-chip';
+      } else if (risk.level === 'warn') {
+        chip.textContent = '▲ POSTURE RISK DETECTED';
+        chip.className = 'risk-chip warn';
+      } else {
+        chip.textContent = '● POSTURE CRITICAL';
+        chip.className = 'risk-chip crit';
+      }
+
+      // CAM-01 dot
+      const dot1 = document.getElementById('dot1');
+      dot1.className = 'cam-status-dot' + (risk.level !== 'safe' ? ' ' + risk.level : '');
+      document.getElementById('evt1').textContent =
+        risk.level === 'safe' ? 'Posture Normal' :
+        risk.level === 'warn' ? 'Posture Risk — ' + risk.spineAngle + '° lean' :
+        'CRITICAL — Posture Collapse';
+
+      // Fire alert on state change
+      if (risk.level !== lastRiskLevel) {
+        if (risk.level === 'warn') fireAlert('warn', 'Posture Risk Detected', 'Spine lean ' + risk.spineAngle + '°', 'CAM-01');
+        if (risk.level === 'crit') fireAlert('crit', 'CRITICAL: Posture Collapse', 'Spine angle ' + risk.spineAngle + '° — HR notified', 'CAM-01');
+        if (risk.level === 'safe' && lastRiskLevel !== 'safe') fireAlert('safe', 'Posture Restored', 'Worker returned to safe position', 'CAM-01');
+        lastRiskLevel = risk.level;
+      }
+
+      document.getElementById('m-detect').textContent = 'Active';
+      document.getElementById('m-detect').className = 'metric-val safe';
+    }
+
+    // ── ALERT SYSTEM ──
+    function fireAlert(level, event, detail, cam) {
+      alertCount++;
+      if (level !== 'safe') riskEventCount++;
+
+      document.getElementById('no-alerts').style.display = 'none';
+      document.getElementById('alerts-today').textContent = alertCount;
+      document.getElementById('alert-count').textContent = alertCount + ' Event' + (alertCount !== 1 ? 's' : '');
+      document.getElementById('b-events').textContent = riskEventCount;
+      document.getElementById('b-events').className = 'bottom-stat-val' + (riskEventCount > 0 ? ' warn' : '');
+
+      const now = new Date();
+      const ts = padZ(now.getHours()) + ':' + padZ(now.getMinutes()) + ':' + padZ(now.getSeconds());
+
+      const item = document.createElement('div');
+      item.className = 'alert-item ' + (level === 'safe' ? '' : level);
+      item.innerHTML = `
+        <div class="alert-top">
+          <div class="alert-event">${event}</div>
+          <div class="alert-time">${ts}</div>
+        </div>
+        <div class="alert-cam">${cam} · ${detail}</div>
+      `;
+
+      const scroll = document.getElementById('alert-scroll');
+      scroll.insertBefore(item, scroll.firstChild);
+    }
+
+    // ── SIMULATED EVENTS FOR CAM-02/03/04 ──
+    const SIM_EVENTS = [
+      { delay: 8000,  cam: 2, level: 'warn', dot: 'dot2', evt: 'evt2', event: 'Rapid Velocity Spike', detail: 'Worker movement exceeded threshold', camera: 'CAM-02' },
+      { delay: 15000, cam: 3, level: 'crit', dot: 'dot3', evt: 'evt3', event: 'CRITICAL: Posture Collapse', detail: 'Severe forward lean detected', camera: 'CAM-03' },
+      { delay: 22000, cam: 2, level: 'safe', dot: 'dot2', evt: 'evt2', event: 'Posture Restored', detail: 'Worker W-0018 recovered', camera: 'CAM-02' },
+      { delay: 31000, cam: 4, level: 'warn', dot: 'dot4', evt: 'evt4', event: 'Abnormal Gait Detected', detail: 'Worker W-0027 — limping pattern', camera: 'CAM-04' },
+      { delay: 40000, cam: 3, level: 'safe', dot: 'dot3', evt: 'evt3', event: 'All Clear — Heavy Machinery', detail: 'Supervisor confirmed safe', camera: 'CAM-03' },
+      { delay: 48000, cam: 4, level: 'safe', dot: 'dot4', evt: 'evt4', event: 'Gait Normalised', detail: 'Worker W-0027 status OK', camera: 'CAM-04' },
+    ];
+
+    function startSimulatedEvents() {
+      SIM_EVENTS.forEach(e => {
+        setTimeout(() => {
+          const dot = document.getElementById(e.dot);
+          const evt = document.getElementById(e.evt);
+          dot.className = 'cam-status-dot' + (e.level !== 'safe' ? ' ' + e.level : '');
+          evt.textContent = e.event;
+          fireAlert(e.level, e.event, e.detail, e.camera);
+        }, e.delay);
+      });
+    }
+
+    // ── MEDIAPIPE SETUP ──
+    function onResults(results) {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth || canvas.offsetWidth;
+      canvas.height = video.videoHeight || canvas.offsetHeight;
+
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (results.poseLandmarks && results.poseLandmarks.length > 0) {
+        const lms = results.poseLandmarks;
+
+        // Skeleton color based on risk
+        const risk = computeRisk(lms);
+        const connColor = risk.level === 'safe' ? '#22C55E' : risk.level === 'warn' ? '#FB923C' : '#F87171';
+        const dotColor = risk.level === 'safe' ? '#4ADE80' : risk.level === 'warn' ? '#FCD34D' : '#FCA5A5';
+
+        drawConnectors(ctx, lms, POSE_CONNECTIONS, { color: connColor, lineWidth: 2.5 });
+        drawLandmarks(ctx, lms, { color: dotColor, lineWidth: 1.5, radius: 4, fillColor: 'rgba(0,0,0,0.5)' });
+
+        updateRiskUI(risk);
+      } else {
+        // No person detected
+        document.getElementById('gauge-num').textContent = '—';
+        document.getElementById('m-detect').textContent = 'No Person';
+        document.getElementById('m-detect').className = 'metric-val warn';
+      }
+
+      ctx.restore();
+    }
+
+    // ── START MONITORING ──
+    async function startMonitoring() {
+      showLoading();
+
+      try {
+        // Request camera to trigger browser permission prompt early
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
+        stream.getTracks().forEach(t => t.stop()); // release — MediaPipe Camera util will re-acquire
+
+        await runLoadingSequence();
+
+        // Hide loading, show video
+        document.getElementById('loading-screen').style.display = 'none';
+
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        video.style.display = 'block';
+        canvas.style.display = 'block';
+
+        // Show overlay UI
+        ['scanline','corner-tl','corner-tr','corner-bl','corner-br','cam-label-overlay','fps-overlay','risk-overlay']
+          .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'block'; });
+
+        monitoringStartTime = Date.now();
+
+        // Init MediaPipe Pose
+        poseInstance = new Pose({
+          locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+        });
+        poseInstance.setOptions({
+          modelComplexity: 1,
+          smoothLandmarks: true,
+          enableSegmentation: false,
+          minDetectionConfidence: 0.55,
+          minTrackingConfidence: 0.55,
+        });
+        poseInstance.onResults(onResults);
+
+        cameraInstance = new Camera(video, {
+          onFrame: async () => { await poseInstance.send({ image: video }); },
+          width: 1280,
+          height: 720,
+        });
+        await cameraInstance.start();
+
+        // Start simulated cam events
+        startSimulatedEvents();
+
+        // Fire initial info alert
+        setTimeout(() => fireAlert('safe', 'Inference Stream Active', 'BlazePose model loaded — 33-point skeleton tracking', 'CAM-01'), 600);
+
+      } catch (err) {
+        console.error('Camera/MediaPipe error:', err);
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('error-screen').style.display = 'flex';
+      }
+    }
+  </script>
+</body>
+</html>

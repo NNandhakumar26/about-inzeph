@@ -9,6 +9,9 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -344,13 +347,13 @@
       { label: "Company Journey & Compliance", slide: 1 },
       { label: "The Engineering Team", slide: 2 },
       { label: "Enterprise & AI Portfolio", slide: 3 },
-      { label: "Client Network & References", slide: 4 },
-      { label: "Building Intelligence On Your Existing Data", slide: 5 },
-      { label: "Phase 0: The Architecture Audit", slide: 6 },
-      { label: "Immediate Next Steps", slide: 7 },
+      { label: "AI Platform — Live Demo", slide: 4 },
+      { label: "Client Network & References", slide: 5 },
+      { label: "Building Intelligence On Your Existing Data", slide: 6 },
+      { label: "Phase 0: The Architecture Audit", slide: 7 },
     ];
 
-    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "Client Network", "Edge AI Pipeline", "Phase 0 Audit", "Next Steps"];
+    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "AI Platform Demo", "Client Network", "Edge AI Pipeline", "Phase 0 Audit", "Next Steps"];
 
     function Slide1({ goTo }) {
       return (
@@ -824,58 +827,61 @@
 
 
 
-    function LiveInferenceDemo() {
-      const [running, setRunning] = useState(false);
-      const [logs, setLogs] = useState([]);
-      const [stage, setStage] = useState("");
-
-      const runDemo = async () => {
-        if (running) return;
-        setRunning(true);
-        setLogs([]);
-        
-        const stages = ["Initializing RTX 4080 Edge Server...", "Calibrating MediaPipe BlazePose...", "Ingesting Camera Feeds (30 FPS)...", "Live Inference Active"];
-        for (const s of stages) { setStage(s); await new Promise(r => setTimeout(r, 600)); }
-
-        // Simulate incoming factory AI alerts
-        const mockLogs = [
-          { time: "00:00:12", cam: "CAM-01 (Assembly Line)", event: "Posture Normal", status: "success", risk: "12%" },
-          { time: "00:00:15", cam: "CAM-03 (Loading Dock)", event: "Rapid Velocity Spike Detected", status: "warning", risk: "88%" },
-          { time: "00:00:18", cam: "CAM-02 (Heavy Mach.)", event: "Severe Posture Collapse", status: "critical", risk: "96%" },
-        ];
-
-        for (const log of mockLogs) {
-          await new Promise(r => setTimeout(r, 800));
-          setLogs(prev => [...prev, log]);
-        }
-        setStage("Streaming Live Factory Data...");
-        setTimeout(() => setRunning(false), 2000);
-      };
-
+    function SlideArchIntel() {
+      const techStack = [
+        { label: "Vector Search", detail: "Floor plan geometry embeddings via HRNet / CubiCasa5K" },
+        { label: "AI Inpainting", detail: "Mask-based room customisation via prompt — no generative hallucination" },
+        { label: "Lakehouse", detail: "Azure ADLS + Databricks Delta — Medallion architecture" },
+        { label: "Backend", detail: "FastAPI gateway orchestrating search, edit, and export workflows" },
+      ];
       return (
-        <div className="search-container">
-          <div className="search-label"><div className="live-dot" /> Live Edge Inference Simulator</div>
-          <div className="search-bar" style={{ marginBottom: 12 }}>
-            <button className="search-btn" onClick={runDemo} disabled={running} style={{ width: "100%", textAlign: "center", padding: "12px", fontSize: "14px" }}>
-              {running ? "Processing Edge Video..." : "Start Camera Stream Inference"}
-            </button>
-          </div>
-          {stage && <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}><div className="spinner" /><span className="status-text">{stage}</span></div>}
-          
-          {logs.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {logs.map((l, i) => (
-                <div key={i} className="result-row" style={{ animationDelay: `0.1s`, borderLeft: `3px solid ${l.status === 'success' ? 'var(--success)' : l.status === 'warning' ? 'var(--accent)' : '#D32F2F'}` }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 11, color: "var(--muted)", width: 60 }}>{l.time}</div>
-                  <div style={{ flex: 1 }}>
-                    <div className="result-title">{l.event}</div>
-                    <div className="result-tags"><span className="result-tag">{l.cam}</span></div>
-                  </div>
-                  <div className="result-score" style={{ color: l.status === 'success' ? 'var(--success)' : l.status === 'warning' ? 'var(--accent)' : '#D32F2F' }}>Risk: {l.risk}</div>
-                </div>
-              ))}
+        <div style={{ padding: "28px 40px", height: "100%", display: "flex", flexDirection: "column" }}>
+          <div className="section-eyebrow">Portfolio Demo</div>
+          <h2 className="slide-title">ArchIntel RAG Engine — <span className="title-accent">AI Intelligence, Live</span></h2>
+          <div className="divider" style={{ marginBottom: 12 }} />
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+            <div className="callout" style={{ alignItems: "flex-start", padding: "10px 14px" }}>
+              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>🧠</span>
+              <div className="callout-text" style={{ fontSize: 13 }}>
+                <strong style={{ color: "var(--navy-dark)", fontFamily: "'Montserrat',sans-serif", fontWeight: 700 }}>What it is: </strong>
+                A retrieval-augmented generation engine that turns years of enterprise design data into an instantly searchable, AI-customisable intelligence layer — fully owned and private to the client.
+              </div>
             </div>
-          )}
+            <div className="callout" style={{ alignItems: "flex-start", padding: "10px 14px" }}>
+              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>🔒</span>
+              <div className="callout-text" style={{ fontSize: 13 }}>
+                <strong style={{ color: "var(--navy-dark)", fontFamily: "'Montserrat',sans-serif", fontWeight: 700 }}>Why it matters: </strong>
+                Unlike generic AI tools, every result is rooted in the client's own portfolio — preserving brand identity and institutional knowledge while accelerating delivery by 60–70%.
+              </div>
+            </div>
+          </div>
+
+          {/* Video — constrained height so tech stack remains visible */}
+          <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", boxShadow: "var(--card-shadow)", flex: 1, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: 310 }}>
+            <div style={{ background: "linear-gradient(90deg, #163672 0%, #1e4896 100%)", padding: "8px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ADE80", animation: "pulse 1.8s ease infinite" }} />
+                <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 11, color: "white", textTransform: "uppercase", letterSpacing: "0.1em" }}>ArchIntel RAG Engine · Live Walkthrough</span>
+              </div>
+              <span className="tag" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.6)", fontSize: 9 }}>Active Build</span>
+            </div>
+            <video
+              src="archintel-demo.mov"
+              controls
+              style={{ width: "100%", flex: 1, minHeight: 0, display: "block", objectFit: "contain", background: "#050810" }}
+            />
+          </div>
+
+          {/* Tech stack strip */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginTop: 10 }}>
+            {techStack.map((t, i) => (
+              <div key={i} style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 7, padding: "8px 12px", boxShadow: "var(--card-shadow)" }}>
+                <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 10, color: "var(--navy)", marginBottom: 3 }}>{t.label}</div>
+                <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)", lineHeight: 1.5 }}>{t.detail}</div>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -935,56 +941,299 @@
             ))}
           </div>
 
-          {/* Inject the new AI Simulator here */}
-          <div style={{marginTop: "auto"}}>
-             <LiveInferenceDemo />
-          </div>
+
+
         </div>
       );
     }
 
-
     function Slide8() {
-      const deliverables = [
-        { icon: "🎥", title: "Live Skeletal Tracking Demo", text: "Before you sign the final contract, we will set up a live webcam demonstration showing our MediaPipe BlazePose AI tracking human posture and macro-movements in real-time." },
-        { icon: "🏭", title: "Edge Hardware Feasibility", text: "We will map out exactly where the 6 PoE cameras should be placed on your specific factory floor plan to eliminate blind spots and ensure 90%+ AI accuracy." },
-        { icon: "🛡️", title: "Investment Protection", text: "By proving the AI's real-time capability via a live demo first, you have zero financial risk. You only proceed when you are 100% confident in the technology." },
-      ];
+      const videoRef = useRef(null);
+      const canvasRef = useRef(null);
+      const [active, setActive] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [loadStage, setLoadStage] = useState('');
+      const [loadPct, setLoadPct] = useState(0);
+      const [riskData, setRiskData] = useState(null);
+      const [alerts, setAlerts] = useState([]);
+      const poseRef = useRef(null);
+      const cameraRef = useRef(null);
+      const lastLevelRef = useRef('safe');
+
+      useEffect(() => {
+        return () => {
+          if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e) {} }
+        };
+      }, []);
+
+      function computeRisk(landmarks) {
+        const ls = landmarks[11], rs = landmarks[12];
+        const lh = landmarks[23], rh = landmarks[24];
+        const nose = landmarks[0];
+        const smx = (ls.x + rs.x) / 2, smy = (ls.y + rs.y) / 2;
+        const hmx = (lh.x + rh.x) / 2, hmy = (lh.y + rh.y) / 2;
+        const dx = smx - hmx, dy = smy - hmy;
+        const spineAngle = Math.abs(Math.atan2(dx, -dy) * 180 / Math.PI);
+        const shoulderTilt = Math.abs(ls.y - rs.y) * 180;
+        const headForward = Math.max(0, Math.abs(nose.x - smx) - 0.02) * 300;
+        let score = 0;
+        if (spineAngle > 45) score += 65;
+        else if (spineAngle > 30) score += 40;
+        else if (spineAngle > 18) score += 18;
+        else score += spineAngle * 0.4;
+        score += Math.min(22, shoulderTilt * 1.2);
+        score += Math.min(18, headForward * 0.4);
+        score = Math.min(100, Math.round(score));
+        let level = 'safe';
+        if (score >= 68) level = 'crit';
+        else if (score >= 38) level = 'warn';
+        return { score, spineAngle: Math.round(spineAngle), shoulderTilt: Math.round(shoulderTilt), level };
+      }
+
+      function onResults(results) {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!video || !canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth || canvas.offsetWidth;
+        canvas.height = video.videoHeight || canvas.offsetHeight;
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (results.poseLandmarks && results.poseLandmarks.length > 0) {
+          const lms = results.poseLandmarks;
+          const risk = computeRisk(lms);
+          const connColor = risk.level === 'safe' ? '#16A34A' : risk.level === 'warn' ? '#E8861A' : '#DC2626';
+          const dotColor  = risk.level === 'safe' ? '#4ADE80' : risk.level === 'warn' ? '#FCD34D' : '#FCA5A5';
+          drawConnectors(ctx, lms, POSE_CONNECTIONS, { color: connColor, lineWidth: 2.5 });
+          drawLandmarks(ctx, lms, { color: dotColor, lineWidth: 1, radius: 3.5, fillColor: 'rgba(0,0,0,0.4)' });
+          setRiskData(risk);
+          if (risk.level !== lastLevelRef.current) {
+            const now = new Date();
+            const ts = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
+            const msg = risk.level === 'warn'  ? `Posture Risk — spine ${risk.spineAngle}° lean`
+                      : risk.level === 'crit'  ? `CRITICAL: Posture Collapse — ${risk.spineAngle}°`
+                      : 'Worker posture restored to safe position';
+            setAlerts(prev => [{ ts, msg, level: risk.level }, ...prev].slice(0, 5));
+            lastLevelRef.current = risk.level;
+          }
+        }
+        ctx.restore();
+      }
+
+      function stopDemo() {
+        if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e) {} cameraRef.current = null; }
+        if (poseRef.current) { try { poseRef.current.close(); } catch(e) {} poseRef.current = null; }
+        setActive(false);
+        setRiskData(null);
+        lastLevelRef.current = 'safe';
+      }
+
+      async function startDemo() {
+        setLoading(true);
+        const stages = [
+          ['Requesting camera access...', 15],
+          ['Loading BlazePose model (33-pt skeleton)...', 40],
+          ['Calibrating pose estimator...', 70],
+          ['Launching edge inference engine...', 90],
+          ['Live inference active ✓', 100],
+        ];
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          stream.getTracks().forEach(t => t.stop());
+          for (const [stage, pct] of stages) {
+            setLoadStage(stage); setLoadPct(pct);
+            await new Promise(r => setTimeout(r, 380));
+          }
+          poseRef.current = new Pose({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}` });
+          poseRef.current.setOptions({ modelComplexity: 1, smoothLandmarks: true, enableSegmentation: false, minDetectionConfidence: 0.55, minTrackingConfidence: 0.55 });
+          poseRef.current.onResults(onResults);
+          cameraRef.current = new Camera(videoRef.current, {
+            onFrame: async () => { await poseRef.current.send({ image: videoRef.current }); },
+            width: 1280, height: 720,
+          });
+          await cameraRef.current.start();
+          setLoading(false);
+          setActive(true);
+        } catch (err) {
+          setLoading(false);
+          setLoadStage('Camera access denied — allow camera in your browser and retry.');
+        }
+      }
+
+      const rc = !riskData ? 'var(--muted)'
+               : riskData.level === 'safe' ? 'var(--success)'
+               : riskData.level === 'warn' ? 'var(--accent)'
+               : '#DC2626';
+      const rl = !riskData ? '—'
+               : riskData.level === 'safe' ? 'LOW'
+               : riskData.level === 'warn' ? 'MODERATE'
+               : 'CRITICAL';
+      const riskChipStyle = !riskData ? {} : {
+        background: riskData.level === 'safe' ? 'rgba(22,163,74,0.15)' : riskData.level === 'warn' ? 'rgba(232,134,26,0.15)' : 'rgba(220,38,38,0.15)',
+        border: `1px solid ${riskData.level === 'safe' ? 'rgba(22,163,74,0.45)' : riskData.level === 'warn' ? 'rgba(232,134,26,0.45)' : 'rgba(220,38,38,0.45)'}`,
+        color: riskData.level === 'safe' ? '#16A34A' : riskData.level === 'warn' ? '#E8861A' : '#DC2626',
+      };
+
       return (
         <div style={{ padding: "36px 40px" }}>
           <div className="section-eyebrow">Engagement Structure</div>
           <h2 className="slide-title">Phase 0: <span className="title-accent">The Live Micro-PoC</span></h2>
           <div className="divider" />
-          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 20, lineHeight: 1.7 }}>
-            <strong style={{ color: "var(--text)" }}>Seeing is Believing.</strong> We don't expect you to invest ₹22 Lakhs on theory. Our Phase 0 engagement proves our real-time computer vision capabilities directly to your leadership team.
+          <p style={{ fontSize: 15, color: "var(--muted)", marginBottom: 18, lineHeight: 1.7 }}>
+            <strong style={{ color: "var(--text)" }}>Seeing is Believing.</strong> We don't expect you to invest on theory. Our Phase 0 proves our real-time computer vision capability to your leadership — right here, right now.
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 12, marginBottom: 18 }}>
-            {deliverables.map((d, i) => (
-              <div key={i} className="deliverable-card">
-                <div className="del-icon-box">{d.icon}</div>
-                <div><div className="del-title">{d.title}</div><div className="del-text">{d.text}</div></div>
+
+          {/* Deliverable cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 20 }}>
+            {[
+              { icon: "🎥", title: "Live Skeletal Tracking Demo", text: "MediaPipe BlazePose runs real-time via your webcam — the same technology deployed on factory floors." },
+              { icon: "🏭", title: "Edge Hardware Feasibility", text: "We map exactly where PoE cameras go on your factory floor, eliminating blind spots with 90%+ accuracy." },
+              { icon: "🛡️", title: "Zero Financial Risk", text: "You only proceed to full build when 100% confident in the live technology demonstration." },
+            ].map((d, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, background: "var(--white)", border: "1px solid var(--border)", borderRadius: 8, padding: "14px 16px", boxShadow: "var(--card-shadow)" }}>
+                <div style={{ width: 34, height: 34, background: "#EEF4FF", border: "1px solid #C5D5F0", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{d.icon}</div>
+                <div>
+                  <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 13, color: "var(--navy-dark)", marginBottom: 4 }}>{d.title}</div>
+                  <div style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>{d.text}</div>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Live demo card */}
+          <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", boxShadow: "var(--card-shadow)" }}>
+
+            {/* Card header */}
+            <div style={{ background: "linear-gradient(90deg, #163672 0%, #1e4896 100%)", padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: active ? "#4ADE80" : "rgba(255,255,255,0.28)", animation: active ? "pulse 1.8s ease infinite" : "none" }} />
+                <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 11, color: "white", textTransform: "uppercase", letterSpacing: "0.1em" }}>Live Skeletal Inference Demo</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, color: "rgba(255,255,255,0.38)", letterSpacing: "0.05em" }}>MediaPipe BlazePose · 33-point Skeleton · Edge-only</span>
+                {active && (
+                  <button onClick={stopDemo} style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.06em", background: "rgba(220,38,38,0.2)", border: "1px solid rgba(220,38,38,0.45)", color: "#FCA5A5", borderRadius: 4, padding: "3px 10px", cursor: "pointer" }}>
+                    ■ Stop
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 210px" }}>
+
+              {/* Video pane */}
+              <div style={{ position: "relative", background: "#050810", aspectRatio: "16/9", overflow: "hidden", minHeight: 200 }}>
+                <video ref={videoRef} autoPlay playsInline muted style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: "scaleX(-1)", display: active ? "block" : "none" }} />
+                <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: "scaleX(-1)", display: active ? "block" : "none" }} />
+
+                {active && <>
+                  <div style={{ position: "absolute", top: 10, left: 10, width: 14, height: 14, borderTop: "2px solid var(--accent)", borderLeft: "2px solid var(--accent)", opacity: 0.75, zIndex: 2 }} />
+                  <div style={{ position: "absolute", top: 10, right: 10, width: 14, height: 14, borderTop: "2px solid var(--accent)", borderRight: "2px solid var(--accent)", opacity: 0.75, zIndex: 2 }} />
+                  <div style={{ position: "absolute", bottom: 10, left: 10, width: 14, height: 14, borderBottom: "2px solid var(--accent)", borderLeft: "2px solid var(--accent)", opacity: 0.75, zIndex: 2 }} />
+                  <div style={{ position: "absolute", bottom: 10, right: 10, width: 14, height: 14, borderBottom: "2px solid var(--accent)", borderRight: "2px solid var(--accent)", opacity: 0.75, zIndex: 2 }} />
+                  <div style={{ position: "absolute", top: 10, left: 30, fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "rgba(255,255,255,0.45)", letterSpacing: "0.06em", zIndex: 3 }}>CAM-01 · ASSEMBLY LINE A</div>
+                  <div style={{ position: "absolute", bottom: 10, right: 30, fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em", zIndex: 3 }}>30 FPS · EDGE</div>
+                </>}
+
+                {active && riskData && (
+                  <div style={{ position: "absolute", bottom: 26, left: 12, zIndex: 4, fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 10, padding: "4px 10px", borderRadius: 4, letterSpacing: "0.06em", ...riskChipStyle }}>
+                    {riskData.level === 'safe' ? '■ POSTURE NORMAL' : riskData.level === 'warn' ? '▲ RISK DETECTED' : '● CRITICAL'}
+                  </div>
+                )}
+
+                {!active && !loading && (
+                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, background: "linear-gradient(155deg, var(--bg) 0%, var(--bg2) 100%)" }}>
+                    <div style={{ width: 52, height: 52, background: "#EEF4FF", border: "1px solid #C5D5F0", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📷</div>
+                    <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 14, color: "var(--navy-dark)" }}>Webcam Inference Ready</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, color: "var(--muted)", textAlign: "center", maxWidth: 250, lineHeight: 1.7, letterSpacing: "0.04em" }}>
+                      Real-time 33-point skeleton · Edge-only · No cloud
+                    </div>
+                    <button onClick={startDemo} className="btn-primary">▶&nbsp; Start Camera Inference</button>
+                  </div>
+                )}
+
+                {loading && (
+                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, background: "linear-gradient(155deg, var(--bg) 0%, var(--bg2) 100%)" }}>
+                    <div style={{ width: 32, height: 32, border: "3px solid var(--border)", borderTopColor: "var(--navy)", borderRadius: "50%", animation: "spin 0.9s linear infinite" }} />
+                    <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, color: "var(--muted)", letterSpacing: "0.06em", textAlign: "center", maxWidth: 240 }}>{loadStage}</div>
+                    <div style={{ width: 200, height: 2, background: "var(--border)", borderRadius: 2, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: loadPct + "%", background: "var(--accent)", borderRadius: 2, transition: "width 0.5s ease" }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right metrics panel */}
+              <div style={{ borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
+
+                <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)", marginBottom: 10 }}>Risk Score</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 36, color: rc, lineHeight: 1 }}>{riskData ? riskData.score : '—'}</div>
+                    <div>
+                      <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: rc }}>{rl}</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)", marginTop: 2 }}>/ 100 threshold</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)", marginBottom: 8 }}>Joint Analysis</div>
+                  {[
+                    { label: "Spine",     val: riskData ? riskData.spineAngle + "°"   : "—", pct: riskData ? Math.min(100, riskData.spineAngle * 2.2) : 0 },
+                    { label: "Shoulders", val: riskData ? riskData.shoulderTilt + "°" : "—", pct: riskData ? Math.min(100, riskData.shoulderTilt)      : 0 },
+                  ].map((j, i) => (
+                    <div key={i} style={{ marginBottom: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                        <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)" }}>{j.label}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--text)" }}>{j.val}</span>
+                      </div>
+                      <div style={{ height: 3, background: "var(--bg2)", borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: j.pct + "%", borderRadius: 2, background: j.pct > 75 ? "#DC2626" : j.pct > 45 ? "var(--accent)" : "var(--success)", transition: "width 0.5s ease, background 0.4s ease" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px" }}>
+                  <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)", marginBottom: 8 }}>Alert Log</div>
+                  {alerts.length === 0 ? (
+                    <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)", textAlign: "center", padding: "10px 0", letterSpacing: "0.06em" }}>Awaiting stream...</div>
+                  ) : alerts.map((a, i) => (
+                    <div key={i} style={{ padding: "6px 8px", borderRadius: 5, marginBottom: 4, borderLeft: `2px solid ${a.level === 'safe' ? 'var(--success)' : a.level === 'warn' ? 'var(--accent)' : '#DC2626'}`, background: a.level === 'safe' ? 'rgba(30,138,76,0.05)' : a.level === 'warn' ? 'rgba(232,134,26,0.06)' : 'rgba(220,38,38,0.06)' }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                        <span style={{ fontFamily: "'Source Sans 3',sans-serif", fontWeight: 600, fontSize: 11, color: "var(--text)" }}>
+                          {a.level === 'safe' ? '■' : a.level === 'warn' ? '▲' : '●'} {a.level === 'safe' ? 'Restored' : a.level === 'warn' ? 'Risk' : 'Critical'}
+                        </span>
+                        <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 8, color: "var(--muted)" }}>{a.ts}</span>
+                      </div>
+                      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)" }}>{a.msg}</div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
       );
     }
 
     function Slide9() {
-      const [checked, setChecked] = useState([false, false, false, false]);
+      const [checked, setChecked] = useState([false, false]);
       const actions = [
-        { action: "Approval of the Phase 0 Audit Proposal", owner: "Client Leadership", day: "Day 1" },
-        { action: "Signing of NDA", owner: "Both Parties", day: "Day 1" },
-        { action: "Provision of Read-Only system access to relevant databases/APIs", owner: "Client IT Team", day: "Day 2–3" },
-        { action: "Day-1 Kickoff of the 14-Day Technical Audit", owner: "Inzeph Engineering Team", day: "Day 3" },
+        { action: "Confirm Phase 0 Engagement & Sign Off on Micro-PoC", owner: "Client Leadership", day: "Day 1" },
+        { action: "Execute NDA & Data Sharing Agreement", owner: "Both Parties", day: "Day 1" },
       ];
       const toggle = i => setChecked(c => { const n = [...c]; n[i] = !n[i]; return n; });
       return (
         <div style={{ padding: "36px 40px" }}>
-          <div className="section-eyebrow">Let's Begin</div>
-          <h2 className="slide-title">Immediate <span className="title-accent">Next Steps</span></h2>
+          <div className="section-eyebrow">Move Forward</div>
+          <h2 className="slide-title">From PoC to <span className="title-accent">Production</span></h2>
           <div className="divider" />
-          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 20 }}>Click each item to track confirmation status.</p>
+          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 20, lineHeight: 1.7 }}>
+            You've seen the technology work in real-time. Here's how we move from live demo to factory-floor deployment.
+          </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
             {actions.map((a, i) => (
               <div key={i} className={`action-row ${checked[i] ? "done" : ""}`} onClick={() => toggle(i)}>
@@ -998,8 +1247,8 @@
             ))}
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            {/* <button className="btn-primary">Proceed to Phase 0 →</button> */}
-            {/* <button className="btn-outline">Download Proposal</button> */}
+            <button className="btn-primary">Proceed to Phase 0 →</button>
+            <button className="btn-outline">Download Proposal</button>
             <span style={{ fontSize: 13, color: "var(--muted)", marginLeft: 4 }}>
               Questions? <strong style={{ color: "var(--navy)" }}>nandha@inzeph.com</strong>
             </span>
@@ -1008,7 +1257,7 @@
       );
     }
 
-    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide7, Slide8, Slide9];
+    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, SlideArchIntel, Slide5, Slide7, Slide8, Slide9];
 
     function App() {
       const [current, setCurrent] = useState(0);
