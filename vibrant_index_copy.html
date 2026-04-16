@@ -335,9 +335,9 @@
         `;
 
     const DEMO_RESULTS = [
-      { icon: "📄", title: "Compliance Report — Operations Module (2023)", match: "98.2%", tags: ["Audit", "Multi-branch", "Automated"] },
-      { icon: "📊", title: "Revenue Analytics Dashboard — Enterprise (2022)", match: "94.7%", tags: ["Real-time", "BI", "Executive"] },
-      { icon: "🔄", title: "Workflow Integration Map — HRMS Portal (2024)", match: "91.3%", tags: ["API", "Cross-system", "Multi-unit"] },
+      { icon: "🛋️", title: "Modular Sofa — 2BHK Bangalore (2023)", match: "98.2%", tags: ["L-shape", "4.2m", "Fabric"] },
+      { icon: "🏮", title: "Ambient Lighting — Villa Project (2022)", match: "94.7%", tags: ["Warm", "Recessed", "LED"] },
+      { icon: "🪑", title: "Ergonomic Chair Set — Corporate (2024)", match: "91.3%", tags: ["Mesh", "Swivel", "6-unit"] },
     ];
 
     const AGENDA = [
@@ -345,12 +345,13 @@
       { label: "The Engineering Team", slide: 2 },
       { label: "Enterprise & AI Portfolio", slide: 3 },
       { label: "Client Network & References", slide: 4 },
-      { label: "Building Intelligence On Your Existing Data", slide: 5 },
-      { label: "Phase 0: The Architecture Audit", slide: 6 },
-      { label: "Immediate Next Steps", slide: 7 },
+      { label: "The Technical Mandate (Addressing the Core Challenges)", slide: 5 },
+      { label: "Unlocking the AI Query Engine", slide: 6 },
+      { label: "Phase 0: The ₹50K Architecture Audit", slide: 7 },
+      { label: "Immediate Next Steps", slide: 8 },
     ];
 
-    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "Client Network", "Edge AI Pipeline", "Phase 0 Audit", "Next Steps"];
+    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "Client Network", "Technical Mandate", "AI Query Engine", "Phase 0 Audit", "Next Steps"];
 
     function Slide1({ goTo }) {
       return (
@@ -366,33 +367,27 @@
                 </div>
               </div>
               <div style={{ width: 28, height: 3, background: "var(--accent)", borderRadius: 2, marginBottom: 24 }} />
+              <div className="cover-meta-label">Prepared for</div>
+              <div className="cover-meta-value">Vibrant Spaces Pvt. Ltd.</div>
               <div className="cover-meta-label">Prepared by</div>
               <div className="cover-meta-value">Inzeph Software Ventures</div>
               <div className="cover-meta-label">Date</div>
-              <div className="cover-meta-value">April 2026</div>
-
+              <div className="cover-meta-value">March 2026</div>
+              <div className="cover-meta-label">Confidentiality</div>
+              <div className="cover-meta-value">MNDA Enclosed</div>
             </div>
             <div className="confidential-stamp">Confidential</div>
           </div>
           <div style={{ flex: 1, padding: "36px 40px 36px 44px", overflowY: "auto" }}>
             <div className="section-eyebrow">Technical Briefing · 2026</div>
             <h1 className="slide-title" style={{ fontSize: "clamp(22px,2.8vw,38px)", marginBottom: 6 }}>
-              Enterprise Portfolio: Edge AI, Operations &<br />
-              <span className="title-accent">HRMS Engineering</span>
+              Inzeph Software Ventures: Capabilities, Portfolio &<br />
+              <span className="title-accent">AI Integration Strategy</span>
             </h1>
             <div className="divider" />
-
-            <div style={{ background: "linear-gradient(135deg, #EEF4FF, #F5F8FF)", border: "1px solid #C5D5F0", borderLeft: "4px solid var(--navy)", borderRadius: 8, padding: "14px 18px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 13 }}>
-              <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>👁️</span>
-              <div>
-                <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 13, color: "var(--navy-dark)", marginBottom: 4, letterSpacing: "0.01em" }}>
-                  Computer Vision & Enterprise Software Architects
-                </div>
-                <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.65 }}>
-                  We bridge the gap between high-speed Machine Learning and daily enterprise operations. We specialize in building <strong style={{ color: "var(--navy)" }}>real-time AI pipelines</strong> and robust backends for workforce management.
-                </div>
-              </div>
-            </div>
+            <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 24, lineHeight: 1.7 }}>
+              This presentation outlines our unified technical approach for Vibrant Spaces — covering the engineering team, AI portfolio, and the phased execution plan.
+            </p>
             <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--muted)", marginBottom: 10 }}>
               Agenda — click any item to jump to that section
             </div>
@@ -416,13 +411,13 @@
           year: "2019 – 2021",
           title: "Academic Roots & First Deployments",
           color: "var(--navy-light)",
-          desc: "Began in college engineering ML algorithms. Delivered our first commercial automation tools for clients in Haryana, while Saran progressed towards mastering large-scale, industry-standard software delivery.",
+          desc: "Began in college engineering ML algorithms. Delivered our first commercial automation tools for clients in Haryana, while Saran joined Zoho to master large-scale, industry-standard software delivery.",
         },
         {
           year: "2022 – 2023",
           title: "Startup Hustle & Deep Integration",
           color: "var(--accent)",
-          desc: <span>Built digital products like Yatn and i4option. Nandha joined a startup to deepen B2B expertise and expand our network, securing our <strong style={{ color: "var(--navy-dark)", fontWeight: 700 }}>first multi-year retention ties in San Francisco for LMS & HRMS portals</strong> while Lalitha pursed her career as Data Engineer</span>,
+          desc: "Built digital products like Yatn and i4option. Nandha joined Instrive Softlabs to deepen B2B expertise and expand our network, securing our first multi-year retention ties in San Francisco for LMS & HRMS portals while Lalitha pursed her career as Data Engineer",
         },
         {
           year: "2024 – Present",
@@ -486,7 +481,7 @@
     function Slide3() {
       const team = [
         {
-          name: "Lalitha Varadarajulu", role: "Data Architect",
+          name: "Lalitha Varadarajulu", role: "Chief Data Architect",
           cred: "M.Tech. Data Science & Engineering · BITS Pilani",
           color: "var(--navy)",
           desc: (
@@ -495,7 +490,11 @@
                 <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Core Strength</div>
                 <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Enterprise data lifecycles, complex ingestion, and security. Architected custom enterprise platforms ensuring ADLS environments are "ML-Ready" with AES-256 encryption.</div>
               </div>
-
+              <div style={{ height: 1, background: "rgba(0,0,0,0.08)" }} />
+              <div>
+                <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Vibrant Spaces Mandate</div>
+                <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Architecting the data foundation—unifying NAADI, Zoho, Tally, and rDash into a secure, integrated Azure Lakehouse.</div>
+              </div>
             </div>
           )
         },
@@ -509,7 +508,11 @@
                 <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Core Strength</div>
                 <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Model orchestration, vector search, and backend scalability. Architected and deployed highly scalable, distributed ML platforms capable of instantly parsing complex datasets.</div>
               </div>
-
+              <div style={{ height: 1, background: "rgba(0,0,0,0.08)" }} />
+              <div>
+                <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Vibrant Spaces Mandate</div>
+                <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Owning the Intelligence Layer. Designing the mathematical brain and pgvector engine that matches 2D floor plans to 3D historical assets.</div>
+              </div>
             </div>
           )
         },
@@ -523,7 +526,11 @@
                 <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Core Strength</div>
                 <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Product vision, stakeholder management and the Business of Tech. Consistent track record of delivering complex enterprise products from concept to execution.</div>
               </div>
-
+              <div style={{ height: 1, background: "rgba(0,0,0,0.08)" }} />
+              <div>
+                <div style={{ fontSize: 11, color: "var(--navy-dark)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Vibrant Spaces Mandate</div>
+                <div style={{ fontSize: 14.5, lineHeight: 1.6 }}>Bridging the brand requirements and technical execution — ensuring the platform drives measurable ROI and seamless integration without operational disruption.</div>
+              </div>
             </div>
           )
         },
@@ -566,122 +573,69 @@
     }
 
     function Slide4() {
-      // The Flagship AI & Enterprise Apps (Full Details)
-      const flagshipProjects = [
+      const projects = [
         {
-          tag: "Enterprise HRMS & Operations", name: "AppsInfy ERP", client: "Product of Infoflux", color: "var(--navy)",
-          link: "https://www.appsinfy.com/",
-          problem: "Heavy-industry enterprises struggling with disconnected legacy systems, manual workforce tracking, and severe data silos.",
-          solution: "Built a fully integrated digital operations platform, unifying fragmented workflows, attendance, and compliance into one dashboard.",
+          tag: "Enterprise Operations Integration", name: "AppsInfy: Enterprise Work Intelligence Platform", color: "var(--navy)",
+          problem: "Heavy-industry enterprises (Oil & Gas/Mining) struggling with disconnected legacy systems, manual workflows, and severe data silos causing compliance risks.",
+          solution: "Built a fully integrated digital operations platform (Go backend + Flutter hybrid app), unifying fragmented workflows into one interface tied securely to Windows Active Directory.",
           result: [
-            "Workflow Speed: Slashed manual reporting time by 80%.",
-            "Architecture: Deployed highly secure, scalable cloud backend.",
+            "Audit Prep Speed: Slashed from 3 weeks to instant automated generation.",
+            "API Latency: Dropped by 65% via Go concurrency models.",
             "Data Accuracy: Minimized manual-entry anomalies by 98%."
           ],
         },
         {
-          tag: "Real-Time AI Processing", name: "Owlo", client: "AI EdTech Ecosystem", color: "var(--navy-light)",
-          link: "https://staging.owloapp.com/",
-          problem: "Processing complex inputs required real-time AI inference to instantly turn notes, PDFs, and videos into smart study cards without latency.",
-          solution: "Engineered an AI-powered learning platform with advanced document parsing, automated grading, and zero-setup deployment.",
+          tag: "AI Learning Ecosystem", name: "Owlo: The 24/7 AI Tutor", color: "var(--navy-light)",
+          problem: "The Availability Gap: Providing every student with a dedicated tutor at any hour. Human tutoring is too expensive to scale, and static tools lack the nuance of voice-led education.",
+          solution: "A Multi-Modal Ecosystem featuring Nemo—a two-way voice tutor powered by Whisper and GPT-4o. Includes 4 distinct AI flashcard types, 6 note-taking formats, and a gamified achievements system.",
           result: [
-            "Processing Speed: Instant generation of study materials.",
-            "Architecture: Optimized ML routing for high reliability.",
-            "Engagement: Frictionless learning with no manual busywork."
+            "Database Overhead: 100% elimination of separate Vector DB costs by unifying embeddings in pgvector.",
+            "Query Speed: Real-time similarity search processing under 120ms.",
+            "Student Engagement: 3x increase in session duration via two-way voice."
           ],
         },
         {
-          tag: "Enterprise System Security", name: "BeyondAsk", client: "Secure Data Twin", color: "#2451A8",
-          link: "#", // Add link if available, otherwise keep #
-          problem: "Enterprises needed AI models that could process highly sensitive internal documents without leaking data to public models.",
-          solution: "Developed a closed-loop 'Digital Brain' intelligence engine utilizing Smart Routing to strictly control data flow and model access.",
+          tag: "Enterprise RAG Infrastructure", name: "BeyondAsk: The Digital Twin", color: "#2451A8",
+          problem: "The writing sounds robotic. The goal was to build an AI that writes exactly like a specific person—capturing their unique tone, phrases, and 'linguistic DNA'.",
+          solution: "Developed the core Python intelligence engine- 'Digital Brain' using LangChain RAG, while providing technical leadership to their internal team for application development. Designed the central gateway with Smart Routing to optimize AI model selection.",
           result: [
-            "System Uptime: 99.99% reliability through multi-provider failover.",
-            "Data Privacy: 100% secure processing within enterprise boundaries.",
-            "Scalability: Handles 10k+ concurrent enterprise requests."
+            "System Uptime: 99.99% reliability through multi-provider failover routing.",
+            "Operating Costs: Reduced token waste by 40% using precision Smart Routing.",
+            "Scalability: Handles 10k+ concurrent enterprise requests without degradation."
           ],
-        }
+        },
       ];
-
-      // The Standard Commercial SaaS/Marketplaces (Compact View)
-      const commercialProjects = [
-        { name: "MyStax", type: "Marketplace Operations", desc: "A modern platform built to optimize business workflows and enhance operational visibility.", link: "https://dev.d3rg12i51fdyq7.amplifyapp.com/home" },
-        { name: "Event-Tix", type: "Event Management System", desc: "An end-to-end solution for event creation, ticketing, and user engagement.", link: "https://dev.event-tix.us/homepage" },
-        { name: "Pulseops", type: "Global HRMS Sandbox", desc: "An HRMS with multi-timezone and multi-shift handling capabilities.", link: "#" }
-      ];
-
       return (
-        <div style={{ padding: "36px 40px", display: "flex", flexDirection: "column", height: "100%" }}>
+        <div style={{ padding: "36px 40px" }}>
           <div className="section-eyebrow">Track Record</div>
           <h2 className="slide-title">Proven <span className="title-accent">Enterprise & AI Portfolio</span></h2>
-          <div className="divider" style={{ marginBottom: 16 }} />
-
-          {/* Flagship Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16, marginBottom: 20, flex: 1 }}>
-            {flagshipProjects.map((p, i) => (
-              <div key={i} className="card" style={{ display: "flex", flexDirection: "column" }}>
+          <div className="divider" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 18 }}>
+            {projects.map((p, i) => (
+              <div key={i} className="card">
                 <div className="card-topbar" style={{ background: p.color }} />
-                <div className="card-body" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                  <span className="tag" style={{ marginBottom: 10, display: "inline-block" }}>{p.tag}</span>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-                    <div>
-                      <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 19, color: p.color, marginBottom: 3 }}>{p.name}</div>
-                      <div style={{ fontSize: 12, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>{p.client}</div>
+                <div className="card-body">
+                  <span className="tag" style={{ marginBottom: 12, display: "block", width: "fit-content" }}>{p.tag}</span>
+                  <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 20, color: p.color, marginBottom: 14 }}>{p.name}</div>
+                  {[{ label: "Problem", text: p.problem }, { label: "Solution", text: p.solution }, { label: "Result", text: p.result }].map((row, j) => (
+                    <div key={j} className="proj-row" style={{ alignItems: "flex-start" }}>
+                      <div className="proj-row-label" style={{ color: j === 2 ? "var(--success)" : "var(--muted)", paddingTop: 3 }}>{row.label}</div>
+                      {Array.isArray(row.text) ? (
+                        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: "var(--text)", fontWeight: 600, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
+                          {row.text.map((bullet, k) => (
+                            <li key={k} style={{ lineHeight: 1.4 }}>
+                              <span style={{ color: "var(--success)" }}>{bullet.split(':')[0]}:</span> {bullet.split(':')[1]}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="proj-row-text" style={{ fontWeight: 400, fontSize: 15 }}>{row.text}</div>
+                      )}
                     </div>
-                    {p.link !== "#" && (
-                      <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: "5px 10px", fontSize: 11, flexShrink: 0, marginLeft: 8 }}>
-                        Website ↗
-                      </a>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-                    {[{ label: "Problem", text: p.problem }, { label: "Solution", text: p.solution }, { label: "Result", text: p.result }].map((row, j) => (
-                      <div key={j} className="proj-row" style={{ alignItems: "flex-start", padding: "6px 0", flex: 1 }}>
-                        <div className="proj-row-label" style={{ color: j === 2 ? "var(--success)" : "var(--muted)", paddingTop: 2, width: 65, fontSize: 11 }}>{row.label}</div>
-                        {Array.isArray(row.text) ? (
-                          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14, color: "var(--text)", fontWeight: 600, display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
-                            {row.text.map((bullet, k) => (
-                              <li key={k} style={{ lineHeight: 1.45 }}>
-                                <span style={{ color: "var(--success)" }}>{bullet.split(':')[0]}:</span> {bullet.split(':')[1] || bullet}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div className="proj-row-text" style={{ fontWeight: 400, fontSize: 14.5, lineHeight: 1.55 }}>{row.text}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Commercial Web Infrastructure Section */}
-          <div style={{ marginTop: "auto" }}>
-            <div style={{ fontSize: 13, fontFamily: "'Montserrat',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--muted)", marginBottom: 12 }}>
-              Additional Commercial Web Infrastructure
-            </div>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "stretch" }}>
-              {commercialProjects.map((cp, i) => (
-                <div key={i} style={{ display: "flex", flexDirection: "column", background: "var(--white)", border: "1px solid var(--border)", borderRadius: 6, padding: "12px 14px", flex: 1, minWidth: 200, boxShadow: "0 1px 3px rgba(27,63,126,0.03)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                    <div>
-                      <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 15, color: "var(--navy-dark)" }}>{cp.name}</div>
-                      <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>{cp.type}</div>
-                    </div>
-                    {cp.link !== "#" && (
-                      <a href={cp.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--navy-light)", textDecoration: "none", fontWeight: 600 }}>
-                        View Live →
-                      </a>
-                    )}
-                  </div>
-                  <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.55, marginTop: "auto" }}>
-                    {cp.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       );
@@ -691,15 +645,6 @@
       const [activeIdx, setActiveIdx] = useState(0);
 
       const clients = [
-        {
-          name: "Confidential Client (NDA)",
-          title: "Leading Commercial Spaces & Buildtech Enterprise",
-          loc: "Chennai, India",
-          tenure: "Active Engagement",
-          url: "#",
-          companyUrl: null,
-          desc: "Currently engineering an integrated workforce intelligence and operational tracking architecture tailored for the interior buildtech and commercial spaces sector."
-        },
         {
           name: "John Perumal",
           title: "Director of Infoflux Systems",
@@ -726,7 +671,14 @@
           desc: "Technical counterpart collaborating on large-scale enterprise deployments."
         },
 
-
+        {
+          name: "Saranya Ramamurthy",
+          title: "Partner & COO of Pallathur Motors",
+          loc: "Chennai, India",
+          tenure: "3+ Years",
+          url: "https://www.linkedin.com/in/dr-saranya-ramamurthy-b48b57198/",
+          desc: "Operational leadership driving automation in automotive and retail ecosystems."
+        },
         {
           name: "Benny A Daniel",
           title: "Specialist Occupational Therapist",
@@ -802,11 +754,9 @@
                   </div>
 
                   <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: "auto" }}>
-                    {activeClient.url !== "#" && (
-                      <a href={activeClient.url} target="_blank" rel="noopener noreferrer" className="btn-linkedin">
-                        Connect on LinkedIn ↗
-                      </a>
-                    )}
+                    <a href={activeClient.url} target="_blank" rel="noopener noreferrer" className="btn-linkedin">
+                      Connect on LinkedIn ↗
+                    </a>
                     {activeClient.companyUrl && (
                       <a href={activeClient.companyUrl} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: "10px 18px" }}>
                         Company Website ↗
@@ -822,56 +772,88 @@
       );
     }
 
+    function Slide6() {
+      const challenges = [
+        {
+          num: "01", name: "The Unified Window",
+          desc: "Consolidating existing, disconnected software systems — Zoho, Tally, NAADI — into one seamless, single-pane-of-glass dashboard for ultimate operational control.",
+          systems: ["Zoho HRMS", "Tally ERP", "NAADI", "rDash"],
+        },
+        {
+          num: "02", name: "The Intelligent Search",
+          desc: "Replacing rigid database queries with a Google-style AI engine capable of understanding natural language to retrieve precise, historical 3D design assets.",
+          systems: ["Natural Language", "Vector Search", "3D Asset DB", "Smart Routing"],
+        },
+      ];
+      return (
+        <div style={{ padding: "36px 40px" }}>
+          <div className="section-eyebrow">Core Challenges</div>
+          <h2 className="slide-title">The Vibrant Spaces : <span className="title-accent">Technical Mandate</span></h2>
+          <div className="divider" />
+          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 22, lineHeight: 1.7 }}>
+            Moving from fragmented software to intelligent, centralized operations.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(270px,1fr))", gap: 18, marginBottom: 18 }}>
+            {challenges.map((c, i) => (
+              <div key={i} className="challenge-card">
+                <div className="challenge-header">
+                  <div className="challenge-num">{c.num}</div>
+                  <div className="challenge-name">{c.name}</div>
+                </div>
+                <div style={{ padding: "16px 22px" }}>
+                  <p style={{ fontSize: 14.5, color: "var(--text)", lineHeight: 1.68, marginBottom: 14 }}>{c.desc}</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {c.systems.map((s, j) => <span key={j} className="tag">{s}</span>)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="callout">
+            <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>💡</span>
+            <div className="callout-text">
+              Both challenges require a <strong>single unified backend</strong> — an Azure Lakehouse that feeds both the dashboard and the AI query engine simultaneously.
+            </div>
+          </div>
+        </div>
+      );
+    }
 
-
-    function LiveInferenceDemo() {
-      const [running, setRunning] = useState(false);
-      const [logs, setLogs] = useState([]);
+    function SearchDemo() {
+      const [query, setQuery] = useState("");
+      const [results, setResults] = useState([]);
+      const [loading, setLoading] = useState(false);
       const [stage, setStage] = useState("");
-
-      const runDemo = async () => {
-        if (running) return;
-        setRunning(true);
-        setLogs([]);
-        
-        const stages = ["Initializing RTX 4080 Edge Server...", "Calibrating MediaPipe BlazePose...", "Ingesting Camera Feeds (30 FPS)...", "Live Inference Active"];
-        for (const s of stages) { setStage(s); await new Promise(r => setTimeout(r, 600)); }
-
-        // Simulate incoming factory AI alerts
-        const mockLogs = [
-          { time: "00:00:12", cam: "CAM-01 (Assembly Line)", event: "Posture Normal", status: "success", risk: "12%" },
-          { time: "00:00:15", cam: "CAM-03 (Loading Dock)", event: "Rapid Velocity Spike Detected", status: "warning", risk: "88%" },
-          { time: "00:00:18", cam: "CAM-02 (Heavy Mach.)", event: "Severe Posture Collapse", status: "critical", risk: "96%" },
-        ];
-
-        for (const log of mockLogs) {
-          await new Promise(r => setTimeout(r, 800));
-          setLogs(prev => [...prev, log]);
-        }
-        setStage("Streaming Live Factory Data...");
-        setTimeout(() => setRunning(false), 2000);
+      const run = async () => {
+        if (!query.trim()) return;
+        setResults([]); setLoading(true);
+        const stages = ["Vectorizing query…", "Routing via GPT-4o…", "Scanning pgvector index…", "Ranking by geometric similarity…"];
+        for (const s of stages) { setStage(s); await new Promise(r => setTimeout(r, 420)); }
+        setLoading(false); setStage(""); setResults(DEMO_RESULTS);
       };
-
       return (
         <div className="search-container">
-          <div className="search-label"><div className="live-dot" /> Live Edge Inference Simulator</div>
-          <div className="search-bar" style={{ marginBottom: 12 }}>
-            <button className="search-btn" onClick={runDemo} disabled={running} style={{ width: "100%", textAlign: "center", padding: "12px", fontSize: "14px" }}>
-              {running ? "Processing Edge Video..." : "Start Camera Stream Inference"}
-            </button>
+          <div className="search-label"><div className="live-dot" /> Live Demo — AI Query Engine</div>
+          <div className="search-bar">
+            <input className="search-input" value={query} onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && run()}
+              placeholder='e.g. "L-shaped modular sofa for 400 sq ft living room"' />
+            <button className="search-btn" onClick={run}>Search</button>
           </div>
-          {stage && <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}><div className="spinner" /><span className="status-text">{stage}</span></div>}
-          
-          {logs.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {logs.map((l, i) => (
-                <div key={i} className="result-row" style={{ animationDelay: `0.1s`, borderLeft: `3px solid ${l.status === 'success' ? 'var(--success)' : l.status === 'warning' ? 'var(--accent)' : '#D32F2F'}` }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 11, color: "var(--muted)", width: 60 }}>{l.time}</div>
+          {loading && <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}><div className="spinner" /><span className="status-text">{stage}</span></div>}
+          {results.length > 0 && (
+            <div style={{ marginTop: 4 }}>
+              <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, color: "var(--muted)", marginBottom: 4, marginTop: 10 }}>
+                {results.length} assets matched · ordered by geometric similarity
+              </div>
+              {results.map((r, i) => (
+                <div key={i} className="result-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                  <div className="result-icon">{r.icon}</div>
                   <div style={{ flex: 1 }}>
-                    <div className="result-title">{l.event}</div>
-                    <div className="result-tags"><span className="result-tag">{l.cam}</span></div>
+                    <div className="result-title">{r.title}</div>
+                    <div className="result-tags">{r.tags.map((t, j) => <span key={j} className="result-tag">{t}</span>)}</div>
                   </div>
-                  <div className="result-score" style={{ color: l.status === 'success' ? 'var(--success)' : l.status === 'warning' ? 'var(--accent)' : '#D32F2F' }}>Risk: {l.risk}</div>
+                  <div className="result-score">{r.match}</div>
                 </div>
               ))}
             </div>
@@ -882,81 +864,44 @@
 
     function Slide7() {
       const steps = [
-        {
-          n: 1, title: "Edge Video Ingestion", tag: "Hardware Layer",
-          desc: "Industrial PoE cameras stream 1080p/30FPS video directly to the localized NVIDIA RTX 4080 Edge Server via LAN. No video ever leaves your factory floor.",
-        },
-        {
-          n: 2, title: "Skeletal Pose Estimation", tag: "AI Vision Layer",
-          desc: "Our TensorRT-accelerated MediaPipe BlazePose models map 33-point geometric skeletal meshes onto workers in real-time, tracking joint angles, posture, and movement velocity.",
-        },
-        {
-          n: 3, title: "Instant Anomaly Alerting", tag: "HRMS Backend Layer",
-          desc: "When the AI detects extreme motor impairment, collapsing, or fatigue, the FastAPI backend instantly pushes a sub-second alert to the HR Dashboard for immediate intervention.",
-        },
+        { n: 1, title: "Vector Embeddings", desc: "Historical design assets and floor plans are converted into mathematical coordinates (vectors) — enabling geometric comparison at machine speed." },
+        { n: 2, title: "Semantic Understanding", desc: "Our Smart Routing engine (leveraging models like GPT-4o) understands the intent and geometry behind the words — not just the spelling." },
+        { n: 3, title: "High-Precision Matching", desc: "Using pgvector, the system retrieves the exact 3D asset matching the 2D requirement instantly, eliminating hours of manual digging." },
       ];
-      
-      const outcomes = [
-        { icon: "⚡", text: "Sub-second inference with zero cloud latency" },
-        { icon: "🛡️", text: "100% Privacy compliant (Edge-only processing)" },
-        { icon: "🚫", text: "Zero physical wearables required for workers" },
-      ];
-
       return (
-        <div style={{ padding: "36px 40px", height: "100%", display: "flex", flexDirection: "column" }}>
-          <div className="section-eyebrow">Computer Vision Pipeline</div>
-          <h2 className="slide-title">Transforming Live Video Into <span className="title-accent">Safety Intelligence</span></h2>
-          <div className="divider" style={{marginBottom: 16}} />
-          <p style={{ fontSize: 14.5, color: "var(--muted)", marginBottom: 16, lineHeight: 1.65 }}>
-            Standard factory CCTV is reactive—you only check it <em>after</em> an accident happens. We deploy an active Edge-AI architecture that monitors the skeletal geometry of your workforce in real-time to prevent incidents before they escalate.
+        <div style={{ padding: "36px 40px" }}>
+          <div className="section-eyebrow">The AI Engine</div>
+          <h2 className="slide-title">Engineering the Vision: <span className="title-accent">The Intelligent Query Layer</span></h2>
+          <div className="divider" />
+          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 18, lineHeight: 1.7 }}>
+            Traditional databases look for exact text matches. We don't use traditional searches.
           </p>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 18 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             {steps.map((s, i) => (
-              <div key={i} className="step-row" style={{padding: "10px 16px"}}>
-                <div className="step-num-box" style={{width: 30, height: 30, fontSize: 13}}>{s.n}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <div className="step-title" style={{fontSize: 13.5}}>{s.title}</div>
-                    <span className="tag" style={{ fontSize: 9, padding: "2px 6px" }}>{s.tag}</span>
-                  </div>
-                  <p style={{ margin: 0, fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>{s.desc}</p>
-                </div>
+              <div key={i} className="step-row">
+                <div className="step-num-box">{s.n}</div>
+                <div><div className="step-title">{s.title}</div>
+                  <p style={{ margin: 0, fontSize: 14, color: "var(--muted)", lineHeight: 1.65 }}>{s.desc}</p></div>
               </div>
             ))}
-          </div>
-
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
-            {outcomes.map((o, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 7, padding: "8px 12px", fontSize: 12.5, color: "var(--text)", flex: 1, minWidth: 160 }}>
-                <span style={{ fontSize: 16 }}>{o.icon}</span>
-                <span style={{ fontWeight: 600 }}>{o.text}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Inject the new AI Simulator here */}
-          <div style={{marginTop: "auto"}}>
-             <LiveInferenceDemo />
           </div>
         </div>
       );
     }
 
-
     function Slide8() {
       const deliverables = [
-        { icon: "🎥", title: "Live Skeletal Tracking Demo", text: "Before you sign the final contract, we will set up a live webcam demonstration showing our MediaPipe BlazePose AI tracking human posture and macro-movements in real-time." },
-        { icon: "🏭", title: "Edge Hardware Feasibility", text: "We will map out exactly where the 6 PoE cameras should be placed on your specific factory floor plan to eliminate blind spots and ensure 90%+ AI accuracy." },
-        { icon: "🛡️", title: "Investment Protection", text: "By proving the AI's real-time capability via a live demo first, you have zero financial risk. You only proceed when you are 100% confident in the technology." },
+        { icon: "🛡️", title: "Technical Debt Prevention", text: "Discovering a mismatch in NAADI's factory logic after building the AI would cost lakhs in rework. We identify it now — before a single line of production code is written." },
+        { icon: "🔗", title: "Security & Integration Mapping", text: "Identifying exact data flow vulnerabilities between Zoho, Tally, and the proposed Azure Lakehouse — with a remediation roadmap included." },
+        { icon: "💎", title: "Investment Protection", text: "Spending ₹50K now ensures your ₹15L+ production budget is spent on a foundation that is guaranteed to execute — not on expensive course-corrections." },
       ];
       return (
         <div style={{ padding: "36px 40px" }}>
           <div className="section-eyebrow">Engagement Structure</div>
-          <h2 className="slide-title">Phase 0: <span className="title-accent">The Live Micro-PoC</span></h2>
+          <h2 className="slide-title">Phase 0: <span className="title-accent">The ₹50K Architecture Audit</span></h2>
           <div className="divider" />
           <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 20, lineHeight: 1.7 }}>
-            <strong style={{ color: "var(--text)" }}>Seeing is Believing.</strong> We don't expect you to invest ₹22 Lakhs on theory. Our Phase 0 engagement proves our real-time computer vision capabilities directly to your leadership team.
+            <strong style={{ color: "var(--text)" }}>Professional Technical Engagement to Eliminate Project Risk.</strong> Most enterprise software initiatives fail due to <em>Data Friction</em> — systems that don't talk to each other or messy historical files.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 12, marginBottom: 18 }}>
             {deliverables.map((d, i) => (
@@ -966,6 +911,16 @@
               </div>
             ))}
           </div>
+          <div className="fee-box">
+            <div>
+              <div className="fee-label">14-Day Deliverable · Fixed Scope · Fixed Fee</div>
+              <div className="fee-desc">Architecture Blueprint + API Strategy + Phase 1 Production Proposal</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginBottom: 3 }}>Total (incl. 18% GST)</div>
+              <div className="fee-amount">₹59,000</div>
+            </div>
+          </div>
         </div>
       );
     }
@@ -973,9 +928,9 @@
     function Slide9() {
       const [checked, setChecked] = useState([false, false, false, false]);
       const actions = [
-        { action: "Approval of the Phase 0 Audit Proposal", owner: "Client Leadership", day: "Day 1" },
+        { action: "Approval of the Phase 0 Audit Proposal", owner: "Vibrant Spaces Leadership", day: "Day 1" },
         { action: "Signing of NDA", owner: "Both Parties", day: "Day 1" },
-        { action: "Provision of Read-Only system access to relevant databases/APIs", owner: "Client IT Team", day: "Day 2–3" },
+        { action: "Provision of Read-Only system access to relevant databases/APIs", owner: "Vibrant Spaces IT Team", day: "Day 2–3" },
         { action: "Day-1 Kickoff of the 14-Day Technical Audit", owner: "Inzeph Engineering Team", day: "Day 3" },
       ];
       const toggle = i => setChecked(c => { const n = [...c]; n[i] = !n[i]; return n; });
@@ -1008,7 +963,7 @@
       );
     }
 
-    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide7, Slide8, Slide9];
+    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, Slide9];
 
     function App() {
       const [current, setCurrent] = useState(0);
@@ -1036,7 +991,11 @@
           <style>{STYLES}</style>
           <div className="root">
             <div className="topbar">
-              <button className="logo" onClick={() => goTo(0)}>IN<span>ZEPH</span></button>
+              <button className="logo" onClick={() => goTo(0)}>IN<span>ZEPH</span>
+                <span style={{ fontWeight: 500, fontSize: 14, color: "rgba(255,255,255,0.85)", marginLeft: 8, letterSpacing: "0.06em" }}>
+                  × VIBRANT SPACES
+                </span>
+              </button>
               <div className="nav-dots">
                 {SLIDES_COMPS.map((_, i) => (
                   <button key={i} className={`dot ${i === current ? "active" : ""}`} onClick={() => goTo(i)} title={SLIDE_LABELS[i]} />
