@@ -594,7 +594,7 @@
           ],
         },
         {
-          tag: "Enterprise System Security", name: "BeyondAsk", client: "Secure Data Twin", color: "#2451A8",
+          tag: "'Digital Brain' intelligence - NDA Protected", name: "BeyondAsk", client: "Secure Data Twin", color: "#2451A8",
           link: "#", // Add link if available, otherwise keep #
           problem: "Enterprises needed AI models that could process highly sensitive internal documents without leaking data to public models.",
           solution: "Developed a closed-loop 'Digital Brain' intelligence engine utilizing Smart Routing to strictly control data flow and model access.",
@@ -842,15 +842,15 @@
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
             <div className="callout" style={{ alignItems: "flex-start", padding: "10px 14px" }}>
-              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>🧠</span>
-              <div className="callout-text" style={{ fontSize: 13 }}>
+              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 2 }}>🧠</span>
+              <div className="callout-text" style={{ fontSize: 14.5 }}>
                 <strong style={{ color: "var(--navy-dark)", fontFamily: "'Montserrat',sans-serif", fontWeight: 700 }}>What it is: </strong>
                 A retrieval-augmented generation engine that turns years of enterprise design data into an instantly searchable, AI-customisable intelligence layer — fully owned and private to the client.
               </div>
             </div>
             <div className="callout" style={{ alignItems: "flex-start", padding: "10px 14px" }}>
-              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>🔒</span>
-              <div className="callout-text" style={{ fontSize: 13 }}>
+              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 2 }}>🔒</span>
+              <div className="callout-text" style={{ fontSize: 14.5 }}>
                 <strong style={{ color: "var(--navy-dark)", fontFamily: "'Montserrat',sans-serif", fontWeight: 700 }}>Why it matters: </strong>
                 Unlike generic AI tools, every result is rooted in the client's own portfolio — preserving brand identity and institutional knowledge while accelerating delivery by 60–70%.
               </div>
@@ -858,13 +858,13 @@
           </div>
 
           {/* Video — constrained height so tech stack remains visible */}
-          <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", boxShadow: "var(--card-shadow)", flex: 1, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: 310 }}>
+          <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", boxShadow: "var(--card-shadow)", flex: 1, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: 464 }}>
             <div style={{ background: "linear-gradient(90deg, #163672 0%, #1e4896 100%)", padding: "8px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ADE80", animation: "pulse 1.8s ease infinite" }} />
-                <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 11, color: "white", textTransform: "uppercase", letterSpacing: "0.1em" }}>ArchIntel RAG Engine · Live Walkthrough</span>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4ADE80", animation: "pulse 1.8s ease infinite" }} />
+                <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 13, color: "white", textTransform: "uppercase", letterSpacing: "0.1em" }}>ArchIntel RAG Engine · Live Walkthrough</span>
               </div>
-              <span className="tag" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.6)", fontSize: 9 }}>Active Build</span>
+              <span className="tag" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.6)", fontSize: 11 }}>Active Build</span>
             </div>
             <video
               src="archintel-demo.mov"
@@ -877,8 +877,8 @@
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginTop: 10 }}>
             {techStack.map((t, i) => (
               <div key={i} style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 7, padding: "8px 12px", boxShadow: "var(--card-shadow)" }}>
-                <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 10, color: "var(--navy)", marginBottom: 3 }}>{t.label}</div>
-                <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 9, color: "var(--muted)", lineHeight: 1.5 }}>{t.detail}</div>
+                <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 11.5, color: "var(--navy)", marginBottom: 3 }}>{t.label}</div>
+                <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10.5, color: "var(--muted)", lineHeight: 1.5 }}>{t.detail}</div>
               </div>
             ))}
           </div>
@@ -901,7 +901,7 @@
           desc: "When the AI detects extreme motor impairment, collapsing, or fatigue, the FastAPI backend instantly pushes a sub-second alert to the HR Dashboard for immediate intervention.",
         },
       ];
-      
+
       const outcomes = [
         { icon: "⚡", text: "Sub-second inference with zero cloud latency" },
         { icon: "🛡️", text: "100% Privacy compliant (Edge-only processing)" },
@@ -912,21 +912,21 @@
         <div style={{ padding: "36px 40px", height: "100%", display: "flex", flexDirection: "column" }}>
           <div className="section-eyebrow">Computer Vision Pipeline</div>
           <h2 className="slide-title">Transforming Live Video Into <span className="title-accent">Safety Intelligence</span></h2>
-          <div className="divider" style={{marginBottom: 16}} />
-          <p style={{ fontSize: 14.5, color: "var(--muted)", marginBottom: 16, lineHeight: 1.65 }}>
+          <div className="divider" style={{ marginBottom: 16 }} />
+          <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 16, lineHeight: 1.65 }}>
             Standard factory CCTV is reactive—you only check it <em>after</em> an accident happens. We deploy an active Edge-AI architecture that monitors the skeletal geometry of your workforce in real-time to prevent incidents before they escalate.
           </p>
-          
+
           <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 18 }}>
             {steps.map((s, i) => (
-              <div key={i} className="step-row" style={{padding: "10px 16px"}}>
-                <div className="step-num-box" style={{width: 30, height: 30, fontSize: 13}}>{s.n}</div>
+              <div key={i} className="step-row" style={{ padding: "10px 16px" }}>
+                <div className="step-num-box" style={{ width: 32, height: 32, fontSize: 14 }}>{s.n}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <div className="step-title" style={{fontSize: 13.5}}>{s.title}</div>
-                    <span className="tag" style={{ fontSize: 9, padding: "2px 6px" }}>{s.tag}</span>
+                    <div className="step-title" style={{ fontSize: 15 }}>{s.title}</div>
+                    <span className="tag" style={{ fontSize: 11, padding: "2px 6px" }}>{s.tag}</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>{s.desc}</p>
+                  <p style={{ margin: 0, fontSize: 14.5, color: "var(--muted)", lineHeight: 1.5 }}>{s.desc}</p>
                 </div>
               </div>
             ))}
@@ -934,8 +934,8 @@
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
             {outcomes.map((o, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 7, padding: "8px 12px", fontSize: 12.5, color: "var(--text)", flex: 1, minWidth: 160 }}>
-                <span style={{ fontSize: 16 }}>{o.icon}</span>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 7, padding: "8px 12px", fontSize: 13.5, color: "var(--text)", flex: 1, minWidth: 160 }}>
+                <span style={{ fontSize: 18 }}>{o.icon}</span>
                 <span style={{ fontWeight: 600 }}>{o.text}</span>
               </div>
             ))}
@@ -962,7 +962,7 @@
 
       useEffect(() => {
         return () => {
-          if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e) {} }
+          if (cameraRef.current) { try { cameraRef.current.stop(); } catch (e) { } }
         };
       }, []);
 
@@ -1003,16 +1003,16 @@
           const lms = results.poseLandmarks;
           const risk = computeRisk(lms);
           const connColor = risk.level === 'safe' ? '#16A34A' : risk.level === 'warn' ? '#E8861A' : '#DC2626';
-          const dotColor  = risk.level === 'safe' ? '#4ADE80' : risk.level === 'warn' ? '#FCD34D' : '#FCA5A5';
+          const dotColor = risk.level === 'safe' ? '#4ADE80' : risk.level === 'warn' ? '#FCD34D' : '#FCA5A5';
           drawConnectors(ctx, lms, POSE_CONNECTIONS, { color: connColor, lineWidth: 2.5 });
           drawLandmarks(ctx, lms, { color: dotColor, lineWidth: 1, radius: 3.5, fillColor: 'rgba(0,0,0,0.4)' });
           setRiskData(risk);
           if (risk.level !== lastLevelRef.current) {
             const now = new Date();
-            const ts = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
-            const msg = risk.level === 'warn'  ? `Posture Risk — spine ${risk.spineAngle}° lean`
-                      : risk.level === 'crit'  ? `CRITICAL: Posture Collapse — ${risk.spineAngle}°`
-                      : 'Worker posture restored to safe position';
+            const ts = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => String(n).padStart(2, '0')).join(':');
+            const msg = risk.level === 'warn' ? `Posture Risk — spine ${risk.spineAngle}° lean`
+              : risk.level === 'crit' ? `CRITICAL: Posture Collapse — ${risk.spineAngle}°`
+                : 'Worker posture restored to safe position';
             setAlerts(prev => [{ ts, msg, level: risk.level }, ...prev].slice(0, 5));
             lastLevelRef.current = risk.level;
           }
@@ -1021,8 +1021,8 @@
       }
 
       function stopDemo() {
-        if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e) {} cameraRef.current = null; }
-        if (poseRef.current) { try { poseRef.current.close(); } catch(e) {} poseRef.current = null; }
+        if (cameraRef.current) { try { cameraRef.current.stop(); } catch (e) { } cameraRef.current = null; }
+        if (poseRef.current) { try { poseRef.current.close(); } catch (e) { } poseRef.current = null; }
         setActive(false);
         setRiskData(null);
         lastLevelRef.current = 'safe';
@@ -1061,13 +1061,13 @@
       }
 
       const rc = !riskData ? 'var(--muted)'
-               : riskData.level === 'safe' ? 'var(--success)'
-               : riskData.level === 'warn' ? 'var(--accent)'
-               : '#DC2626';
+        : riskData.level === 'safe' ? 'var(--success)'
+          : riskData.level === 'warn' ? 'var(--accent)'
+            : '#DC2626';
       const rl = !riskData ? '—'
-               : riskData.level === 'safe' ? 'LOW'
-               : riskData.level === 'warn' ? 'MODERATE'
-               : 'CRITICAL';
+        : riskData.level === 'safe' ? 'LOW'
+          : riskData.level === 'warn' ? 'MODERATE'
+            : 'CRITICAL';
       const riskChipStyle = !riskData ? {} : {
         background: riskData.level === 'safe' ? 'rgba(22,163,74,0.15)' : riskData.level === 'warn' ? 'rgba(232,134,26,0.15)' : 'rgba(220,38,38,0.15)',
         border: `1px solid ${riskData.level === 'safe' ? 'rgba(22,163,74,0.45)' : riskData.level === 'warn' ? 'rgba(232,134,26,0.45)' : 'rgba(220,38,38,0.45)'}`,
@@ -1180,8 +1180,8 @@
                 <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
                   <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)", marginBottom: 8 }}>Joint Analysis</div>
                   {[
-                    { label: "Spine",     val: riskData ? riskData.spineAngle + "°"   : "—", pct: riskData ? Math.min(100, riskData.spineAngle * 2.2) : 0 },
-                    { label: "Shoulders", val: riskData ? riskData.shoulderTilt + "°" : "—", pct: riskData ? Math.min(100, riskData.shoulderTilt)      : 0 },
+                    { label: "Spine", val: riskData ? riskData.spineAngle + "°" : "—", pct: riskData ? Math.min(100, riskData.spineAngle * 2.2) : 0 },
+                    { label: "Shoulders", val: riskData ? riskData.shoulderTilt + "°" : "—", pct: riskData ? Math.min(100, riskData.shoulderTilt) : 0 },
                   ].map((j, i) => (
                     <div key={i} style={{ marginBottom: 8 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
@@ -1222,8 +1222,8 @@
     function Slide9() {
       const [checked, setChecked] = useState([false, false]);
       const actions = [
-        { action: "Confirm Phase 0 Engagement & Sign Off on Micro-PoC", owner: "Client Leadership", day: "Day 1" },
         { action: "Execute NDA & Data Sharing Agreement", owner: "Both Parties", day: "Day 1" },
+        { action: "Confirm further Engagement & Sign Off", owner: "Client Leadership", day: "Day 2" },
       ];
       const toggle = i => setChecked(c => { const n = [...c]; n[i] = !n[i]; return n; });
       return (
@@ -1247,8 +1247,7 @@
             ))}
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <button className="btn-primary">Proceed to Phase 0 →</button>
-            <button className="btn-outline">Download Proposal</button>
+
             <span style={{ fontSize: 13, color: "var(--muted)", marginLeft: 4 }}>
               Questions? <strong style={{ color: "var(--navy)" }}>nandha@inzeph.com</strong>
             </span>
