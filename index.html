@@ -349,7 +349,7 @@
       { label: "Company Journey & Compliance", slide: 1 },
       { label: "The Engineering Team", slide: 2 },
       { label: "Enterprise & AI Portfolio", slide: 3 },
-      { label: "AI Platform — Live Demo", slide: 4 },
+      { label: "AI Platform — Live POC Demo", slide: 4 },
       { label: "Client Network & References", slide: 5 },
       // { label: "Building Intelligence On Your Existing Data", slide: 6 },
       // { label: "Phase 0: The Architecture Audit", slide: 7 },
@@ -382,8 +382,8 @@
           <div style={{ flex: 1, padding: "36px 40px 36px 44px", overflowY: "auto" }}>
             <div className="section-eyebrow">Technical Briefing · 2026</div>
             <h1 className="slide-title" style={{ fontSize: "clamp(22px,2.8vw,38px)", marginBottom: 6 }}>
-              Enterprise Portfolio: Edge AI, Operations &<br />
-              <span className="title-accent">HRMS Engineering</span>
+              Edge AI, Data & Full Stack <br />
+              <span className="title-accent">Engineering Solutions built to Last</span>
             </h1>
             <div className="divider" />
 
@@ -1222,19 +1222,21 @@
     }
 
     function Slide9() {
-      const [checked, setChecked] = useState([false, false]);
+      const [checked, setChecked] = useState([false, false, false, false]);
       const actions = [
-        { action: "Execute NDA & Data Sharing Agreement", owner: "Both Parties", day: "Day 1" },
-        { action: "Confirm further Engagement & Sign Off", owner: "Client Leadership", day: "Day 2" },
+        { action: "Execute NDA & Data Sharing Agreement", owner: "Both Parties", day: "Step 1" },
+        { action: "Architecture Audit & Scope Definition", owner: "Inzeph & Client Tech Team", day: "Step 2" },
+        { action: "Submit Technical Proposal & Timelines", owner: "Inzeph", day: "Step 3" },
+        { action: "Confirm further Engagement & Sign Off", owner: "Client Leadership", day: "Step 4" },
       ];
       const toggle = i => setChecked(c => { const n = [...c]; n[i] = !n[i]; return n; });
       return (
         <div style={{ padding: "36px 40px" }}>
           <div className="section-eyebrow">Move Forward</div>
-          <h2 className="slide-title">From PoC to <span className="title-accent">Production</span></h2>
+          <h2 className="slide-title">Next Steps to <span className="title-accent">Deployment</span></h2>
           <div className="divider" />
           <p style={{ fontSize: 16, color: "var(--muted)", marginBottom: 20, lineHeight: 1.7 }}>
-            You've seen the technology work in real-time. Here's how we move from live demo to factory-floor deployment.
+            You've seen our capabilities in action. Here is our structured process to move from initial technical discussions to a full-scale enterprise deployment.
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 24 }}>
             {actions.map((a, i) => (
