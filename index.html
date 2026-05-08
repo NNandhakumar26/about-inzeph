@@ -107,6 +107,8 @@
 
         .slide-body {
           flex: 1;
+          display: flex;
+          flex-direction: column;
           overflow-y: auto;
           animation: fadeSlide 0.35s ease forwards;
         }
@@ -349,15 +351,15 @@
       { label: "Enterprise & AI Portfolio", slide: 3 },
       { label: "AI Platform — Live Demo", slide: 4 },
       { label: "Client Network & References", slide: 5 },
-      { label: "Building Intelligence On Your Existing Data", slide: 6 },
-      { label: "Phase 0: The Architecture Audit", slide: 7 },
+      // { label: "Building Intelligence On Your Existing Data", slide: 6 },
+      // { label: "Phase 0: The Architecture Audit", slide: 7 },
     ];
 
-    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "AI Platform Demo", "Client Network", "Edge AI Pipeline", "Phase 0 Audit", "Next Steps"];
+    const SLIDE_LABELS = ["Agenda", "Our Journey", "The Engineering Team", "Enterprise Portfolio", "AI Platform Demo", "Client Network", /* "Edge AI Pipeline", "Phase 0 Audit", */ "Next Steps"];
 
     function Slide1({ goTo }) {
       return (
-        <div style={{ display: "flex", minHeight: "100%" }}>
+        <div style={{ display: "flex", flex: 1, minHeight: "100%" }}>
           <div className="cover-side">
             <div>
               <div style={{ marginBottom: 28 }}>
@@ -372,7 +374,7 @@
               <div className="cover-meta-label">Prepared by</div>
               <div className="cover-meta-value">Inzeph Software Ventures</div>
               <div className="cover-meta-label">Date</div>
-              <div className="cover-meta-value">April 2026</div>
+              <div className="cover-meta-value">May 2026</div>
 
             </div>
             <div className="confidential-stamp">Confidential</div>
@@ -385,7 +387,7 @@
             </h1>
             <div className="divider" />
 
-            <div style={{ background: "linear-gradient(135deg, #EEF4FF, #F5F8FF)", border: "1px solid #C5D5F0", borderLeft: "4px solid var(--navy)", borderRadius: 8, padding: "14px 18px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 13 }}>
+            {/* <div style={{ background: "linear-gradient(135deg, #EEF4FF, #F5F8FF)", border: "1px solid #C5D5F0", borderLeft: "4px solid var(--navy)", borderRadius: 8, padding: "14px 18px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 13 }}>
               <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>👁️</span>
               <div>
                 <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 13, color: "var(--navy-dark)", marginBottom: 4, letterSpacing: "0.01em" }}>
@@ -394,8 +396,8 @@
                 <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.65 }}>
                   We bridge the gap between high-speed Machine Learning and daily enterprise operations. We specialize in building <strong style={{ color: "var(--navy)" }}>real-time AI pipelines</strong> and robust backends for workforce management.
                 </div>
-              </div>
-            </div>
+              </div> 
+            </div>*/}
             <div style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--muted)", marginBottom: 10 }}>
               Agenda — click any item to jump to that section
             </div>
@@ -614,7 +616,7 @@
       ];
 
       return (
-        <div style={{ padding: "36px 40px", display: "flex", flexDirection: "column", height: "100%" }}>
+        <div style={{ padding: "36px 40px", display: "flex", flexDirection: "column", flex: 1, height: "100%" }}>
           <div className="section-eyebrow">Track Record</div>
           <h2 className="slide-title">Proven <span className="title-accent">Enterprise & AI Portfolio</span></h2>
           <div className="divider" style={{ marginBottom: 16 }} />
@@ -1256,7 +1258,7 @@
       );
     }
 
-    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, SlideArchIntel, Slide5, Slide7, Slide8, Slide9];
+    const SLIDES_COMPS = [Slide1, Slide2, Slide3, Slide4, SlideArchIntel, Slide5, /* Slide7, Slide8, */ Slide9];
 
     function App() {
       const [current, setCurrent] = useState(0);
