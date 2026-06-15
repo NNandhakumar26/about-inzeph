@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CollegeWear × Inzeph</title>
+<style>
+  :root {
+    --bg: #f7f8fc;
+    --surface: #ffffff;
+    --surface2: #f0f2f8;
+    --border: #e2e6f0;
+    --accent: #3b63f7;
+    --accent2: #7c5cfc;
+    --green: #059669;
+    --red: #dc2626;
+    --yellow: #d97706;
+    --text: #111827;
+    --muted: #6b7280;
+    --dim: #c4cad8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(247,248,252,0.94); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 54px;
+  }
+  .nav-logo { font-weight: 700; font-size: 0.9rem; color: var(--accent); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; padding: 0.3rem 0.7rem; border-radius: 6px; transition: all 0.2s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 7rem 2rem 4rem; max-width: 900px; margin: 0 auto; }
+  section.wide { max-width: 1060px; }
+  .eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; }
+  h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; line-height: 1.2; }
+  h3 { font-size: 1.1rem; font-weight: 600; }
+  p { color: #b0b8cc; font-size: 1rem; margin-top: 0.5rem; }
+  strong { color: var(--text); }
+  .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  #hero { text-align: center; align-items: center; }
+  #hero p { max-width: 580px; font-size: 1.1rem; }
+  .scroll-hint { margin-top: 3rem; color: var(--dim); font-size: 0.82rem; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+  @media(max-width:600px){ .pain-grid{grid-template-columns:1fr;} }
+  .pain-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: border-color 0.2s, transform 0.2s; }
+  .pain-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .pain-card .icon { font-size: 1.5rem; margin-bottom: 0.65rem; }
+  .tag { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 20px; margin-bottom: 0.5rem; }
+  .tag.red { background: rgba(248,113,113,0.12); color: var(--red); }
+  .tag.yellow { background: rgba(251,191,36,0.12); color: var(--yellow); }
+  .blocker-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .blocker { display: flex; gap: 1rem; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; }
+  .blocker-num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px; background: rgba(108,142,255,0.1); color: var(--accent); font-weight: 700; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; }
+  .blocker-body h3 { font-size: 0.97rem; }
+  .blocker-body p { font-size: 0.88rem; margin-top: 0.25rem; }
+  .approach-steps { margin-top: 2.5rem; display: flex; flex-direction: column; }
+  .step { display: flex; gap: 1.5rem; padding: 1.75rem 0; border-bottom: 1px solid var(--border); }
+  .step:last-child { border-bottom: none; }
+  .step-num { flex-shrink: 0; font-size: 2.2rem; font-weight: 800; color: var(--border); line-height: 1; width: 44px; text-align: right; }
+  .step-body h3 { font-size: 1.02rem; margin-bottom: 0.3rem; }
+  .step-body p { font-size: 0.9rem; }
+  .step-tag { font-size: 0.68rem; font-weight: 600; color: var(--accent); margin-bottom: 0.3rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .timeline { margin-top: 2.5rem; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { display: flex; gap: 1.5rem; margin-bottom: 2rem; position: relative; }
+  .tl-dot { flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1rem; z-index: 1; }
+  .tl-content { flex: 1; padding-top: 0.4rem; }
+  .tl-content h3 { font-size: 1rem; }
+  .tl-content p { font-size: 0.88rem; margin-top: 0.3rem; }
+  .tl-badge { font-size: 0.68rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px; background: rgba(108,142,255,0.1); color: var(--accent); display: inline-block; margin-bottom: 0.4rem; }
+  .demo-frame { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-top: 2rem; box-shadow: 0 20px 70px rgba(0,0,0,0.5); }
+  .demo-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+  .demo-dots { display: flex; gap: 5px; }
+  .demo-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .d1{background:#f87171;} .d2{background:#fbbf24;} .d3{background:#34d399;}
+  .demo-title { font-size: 0.78rem; color: var(--muted); }
+  .demo-body { padding: 1.5rem; min-height: 360px; }
+  .chat-messages { display: flex; flex-direction: column; gap: 1rem; min-height: 240px; margin-bottom: 1.25rem; }
+  .msg { max-width: 88%; }
+  .msg.user { align-self: flex-end; }
+  .msg.agent { align-self: flex-start; }
+  .msg-bubble { padding: 0.85rem 1.1rem; border-radius: 14px; font-size: 0.9rem; line-height: 1.6; }
+  .msg.user .msg-bubble { background: var(--accent); color: #fff; border-radius: 14px 14px 4px 14px; }
+  .msg.agent .msg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 14px 14px 14px 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .msg-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+  .dag-btn { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; color: var(--muted); cursor: pointer; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; transition: all 0.2s; white-space: nowrap; }
+  .dag-btn:hover { color: var(--accent); border-color: var(--accent); background: rgba(108,142,255,0.07); }
+  .typing { display: none; align-items: center; gap: 0.4rem; padding: 0.85rem 1.1rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; width: fit-content; margin-bottom: 1rem; }
+  .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: pulse 1.2s ease-in-out infinite; }
+  .typing span:nth-child(2){animation-delay:.2s;} .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.85)} 50%{opacity:1;transform:scale(1)} }
+  .question-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip { font-size: 0.8rem; padding: 0.42rem 0.85rem; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; transition: all 0.2s; text-align: left; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(108,142,255,0.07); }
+  .chip:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 700px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+  .modal-head { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+  .modal-head h3 { font-size: 0.97rem; }
+  .modal-head p { font-size: 0.78rem; margin-top: 0.2rem; }
+  .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; padding: 0.2rem; border-radius: 6px; transition: color .2s; flex-shrink: 0; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+  .dag-svg-wrap { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; overflow-x: auto; }
+  .dag-legend { display: flex; gap: 1.25rem; margin-top: 1rem; font-size: 0.76rem; color: var(--muted); flex-wrap: wrap; }
+  .leg { display: flex; align-items: center; gap: 0.4rem; }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .section-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); max-width: 900px; margin: 0 auto; }
+  #close { text-align: center; align-items: center; }
+  .close-line { font-size: 1.45rem; font-weight: 700; color: var(--text); margin: 0.4rem 0; line-height: 1.4; }
+  .contact-row { display: flex; gap: 1rem; margin-top: 2rem; justify-content: center; flex-wrap: wrap; }
+  .contact-pill { padding: 0.6rem 1.4rem; border-radius: 50px; border: 1px solid var(--border); font-size: 0.88rem; color: var(--muted); background: var(--surface); transition: all .2s; cursor: pointer; text-decoration: none; display: inline-block; }
+  .contact-pill.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .contact-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-pill.primary:hover { opacity: 0.88; color: #fff; }
+  .insight-box { margin-top: 1.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.25rem; font-size: 0.9rem; color: var(--muted); }
+  .insight-box strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">INZEPH × COLLEGEWEAR</div>
+  <div class="nav-links">
+    <a href="#problems">The Problems</a>
+    <a href="#blockers">AI Blockers</a>
+    <a href="#how">Our Approach</a>
+    <a href="#journey">The Journey</a>
+    <a href="#demo">Live Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="eyebrow">A conversation, not a pitch</div>
+  <h1>You've got a platform issue.<br><span class="grad">You also have a data problem.</span><br>They're related.</h1>
+  <p style="margin-top:1.25rem;">Here's what we've seen, what's actually going on under the hood, and how we think about solving it — in plain language.</p>
+  <div class="scroll-hint">↓ scroll</div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PROBLEMS -->
+<section id="problems">
+  <div class="eyebrow">What we're seeing</div>
+  <h2>Four fires burning<br>at the same time</h2>
+  <p style="margin-top:0.75rem;">Two stores. One ERP. Five years of accumulated data. And a platform that nobody fully owns anymore.</p>
+
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="icon">🐢</div>
+      <span class="tag red">Performance</span>
+      <h3>Pages taking 15–25 seconds</h3>
+      <p>Not a server problem — the code makes 50 database queries where one would do. Checkout hangs. Carts get abandoned. Revenue walks out the door.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">🚫</div>
+      <span class="tag red">Deployment</span>
+      <h3>Fixes are written — can't ship</h3>
+      <p>Your dev team has fixed 15 of 16 files. Zero are in production. There's no safe path to deploy without risking another outage.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">🗑️</div>
+      <span class="tag yellow">Data Bloat</span>
+      <h3>5+ years of ghost data</h3>
+      <p>Every design session that didn't convert left behind a WooCommerce product record and media files. Your database scans through years of abandoned sessions on every page load.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">👻</div>
+      <span class="tag yellow">Governance</span>
+      <h3>Nobody owns the platform</h3>
+      <p>The firm that built it in 2019 has zero original staff left. You don't have access to your own codebase. Changes happen reactively, in the dark.</p>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    💡 <strong>The thing about these four:</strong> they're not independent. Data bloat masks the code problems. Code problems make the data bloat worse. The deployment gap means nothing gets fixed. And the governance gap means nobody sees the full picture — until there's an outage.
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- AI BLOCKERS -->
+<section id="blockers">
+  <div class="eyebrow">Why AI can't help you yet</div>
+  <h2>Your data isn't ready<br>to answer questions</h2>
+  <p style="margin-top:0.75rem;">When someone asks "why did orders drop last week?" — nobody can answer that in under an hour. Not because the data doesn't exist. Because it lives in five different places and doesn't talk.</p>
+
+  <div class="blocker-list">
+    <div class="blocker">
+      <div class="blocker-num">1</div>
+      <div class="blocker-body">
+        <h3>Orders split across two WooCommerce instances</h3>
+        <p>Stoles and partner are separate platforms. No single view of the business. Cross-site analytics means a manual export.</p>
+      </div>
+    </div>
+    <div class="blocker">
+      <div class="blocker-num">2</div>
+      <div class="blocker-body">
+        <h3>Odoo knows things WooCommerce doesn't — and vice versa</h3>
+        <p>Production status lives in Odoo. Order intent and design details live in WooCommerce. A fragile, race-condition-prone webhook connects them. When it breaks, nobody knows.</p>
+      </div>
+    </div>
+    <div class="blocker">
+      <div class="blocker-num">3</div>
+      <div class="blocker-body">
+        <h3>Ghost data corrupts every query</h3>
+        <p>An AI querying your database right now would treat abandoned design sessions from 2021 and test orders as real data. Garbage in, garbage out.</p>
+      </div>
+    </div>
+    <div class="blocker">
+      <div class="blocker-num">4</div>
+      <div class="blocker-body">
+        <h3>No observability layer</h3>
+        <p>You find out about outages when a customer emails. No metrics pipeline, no alerts, no historical performance data. You can't improve what you can't see.</p>
+      </div>
+    </div>
+    <div class="blocker">
+      <div class="blocker-num">5</div>
+      <div class="blocker-body">
+        <h3>Custom data lives in a WordPress black box</h3>
+        <p>Stole design options, school configs, color choices — serialized key-value blobs inside wp_postmeta. No structure, no indexes, can't be queried meaningfully.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- HOW WE THINK -->
+<section id="how">
+  <div class="eyebrow">How we think about this</div>
+  <h2>Stabilize first.<br>Then make it intelligent.</h2>
+  <p style="margin-top:0.75rem;">We don't parachute in with an AI solution before the foundation exists. That's how you end up with a fancy dashboard on top of broken plumbing.</p>
+
+  <div class="approach-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <div class="step-tag">Understand</div>
+        <h3>We spend real time listening first</h3>
+        <p>Before we touch a line of code, we want to know how your team works, what decisions you make every day, and where you're flying blind. The best AI answers the questions you're already asking — just instantly.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <div class="step-tag">Audit</div>
+        <h3>Map everything — platform, data, integrations</h3>
+        <p>Not to write a report nobody reads. To know exactly what's broken, what's good enough, and what needs a rebuild. Your team already has fixes written — we'd start by getting those shipped safely.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <div class="step-tag">Unify</div>
+        <h3>One place where all your data lives clean</h3>
+        <p>WooCommerce orders (both sites), Odoo production status, design configurations, school data — brought together, cleaned, structured properly. This is what makes everything else possible.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <div class="step-tag">Intelligence</div>
+        <h3>An agent that understands your business</h3>
+        <p>Not a chatbot. A system that knows your data model, knows which engine to query for which question, and returns plain English answers with the reasoning shown. You ask — it figures out where to look, runs the query, and tells you what it found.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- JOURNEY -->
+<section id="journey">
+  <div class="eyebrow">What working together looks like</div>
+  <h2>Four phases,<br>one direction</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot">🎯</div>
+      <div class="tl-content">
+        <div class="tl-badge">Phase 1 · Weeks 1–3</div>
+        <h3>Discovery — understand before we build</h3>
+        <p>Sit with your team. Map every workflow. Understand the questions you wish you could answer instantly. By the end we have a shared picture of the problem — not our picture, yours.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">🔍</div>
+      <div class="tl-content">
+        <div class="tl-badge">Phase 2 · Weeks 2–8 (concurrent)</div>
+        <h3>Audit & Stabilize — fix the burning things first</h3>
+        <p>Deploy the existing code fixes safely. Set up CI/CD. Split staging environments. Stop the data bloat from growing. You see performance improvements within days, not months.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">🏗️</div>
+      <div class="tl-content">
+        <div class="tl-badge">Phase 3 · Months 2–5</div>
+        <h3>Data Platform — bring everything together</h3>
+        <p>Unified data layer connecting WooCommerce (both sites), Odoo, and your design config data. Clean, structured, queryable. Real-time sync. A metrics layer so you can finally see what's happening.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">🤖</div>
+      <div class="tl-content">
+        <div class="tl-badge">Phase 4 · Months 5–7</div>
+        <h3>AI Agent — your business, in plain English</h3>
+        <p>A conversational interface sitting on top of your data platform. Ask anything about orders, fulfillment, school performance, seasonal trends. It knows where to look, runs the query, and shows its work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- DEMO -->
+<section id="demo" class="wide">
+  <div class="eyebrow">Before we wrap up</div>
+  <h2>Here's what it actually<br>feels like to use</h2>
+  <p style="margin-top:0.75rem;">This simulates the agent experience. The questions, the reasoning, and the response style are exactly what we'd build for CollegeWear's data. Click a question — then click the ⬡ icon on the response to see how the answer was derived.</p>
+
+  <div class="demo-frame">
+    <div class="demo-header">
+      <div class="demo-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <span class="demo-title">CollegeWear AI Agent — Data Platform Preview</span>
+    </div>
+    <div class="demo-body">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg agent">
+          <div class="msg-bubble">Hey 👋 — ask me anything about orders, fulfillment, performance, or school trends. I'll show you how I figure it out.</div>
+        </div>
+      </div>
+      <div class="typing" id="typingIndicator">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="question-chips" id="questionChips">
+        <button class="chip" onclick="askQ(0)">Which school drove the most stole orders this season?</button>
+        <button class="chip" onclick="askQ(1)">Why did checkout conversions drop in April?</button>
+        <button class="chip" onclick="askQ(2)">Which partner designs are most popular right now?</button>
+        <button class="chip" onclick="askQ(3)">How long are customers waiting from order to shipment?</button>
+        <button class="chip" onclick="askQ(4)">What would a 24-hour outage cost us during peak week?</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CLOSE -->
+<section id="close">
+  <div class="eyebrow">That's it</div>
+  <div class="close-line">We've worked in messy, real systems.</div>
+  <div class="close-line grad">We don't start with AI. We start with understanding.</div>
+  <p style="margin-top:1.25rem; max-width:520px; text-align:center;">If any of this resonates — let's just talk. No deck, no proposal, no formality. Just a conversation about what you're trying to figure out.</p>
+  <div class="contact-row">
+    <a href="mailto:lalitha@inzeph.com" class="contact-pill primary">lalitha@inzeph.com</a>
+    <span class="contact-pill">inzeph.com</span>
+  </div>
+</section>
+
+<!-- DAG MODAL -->
+<div class="modal-overlay" id="dagModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>How this answer was derived</h3>
+        <p id="dagSubtitle" style="color:var(--muted);"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="dag-svg-wrap">
+        <svg id="dagSvg" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;min-width:780px;" viewBox="0 0 820 340"></svg>
+      </div>
+      <div class="dag-legend">
+        <div class="leg"><div class="leg-dot" style="background:#3b63f7;border-radius:2px;width:18px;height:3px;"></div> Executed path</div>
+        <div class="leg"><div class="leg-dot" style="background:#c4cad8;border-radius:2px;width:18px;height:3px;"></div> Available, not used</div>
+        <div class="leg"><div class="leg-dot" style="background:#059669"></div> Entry</div>
+        <div class="leg"><div class="leg-dot" style="background:#7c5cfc"></div> Result</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const QA = [
+  {
+    q: "Which school drove the most stole orders this season?",
+    a: "<strong>University of Southern California</strong> led all schools with <strong>847 stole orders</strong> this season — about 12% of total volume.<br><br>Close behind: Ohio State (791), Texas A&M (743), Michigan (698).<br><br>USC also had the highest average order value at <strong>$42.80</strong>, likely because they lean toward premium embroidery options.",
+    dag: 0
+  },
+  {
+    q: "Why did checkout conversions drop in April?",
+    a: "April 3–11 saw a <strong>31% drop in completed checkouts</strong> on the partner site. Three things happened simultaneously:<br><br><strong>1. Site instability</strong> — checkout was unresponsive for 3 days (Apr 5–7). Estimated ~$40K in lost GMV.<br><strong>2. Odoo sync failures</strong> — the webhook race condition caused silent import failures. Customers saw confirmation; orders never reached production.<br><strong>3. Session table bloat</strong> — DB query times doubled in early April as session tables crossed a size threshold.",
+    dag: 1
+  },
+  {
+    q: "Which partner designs are most popular right now?",
+    a: "<strong>Classic Satin with Gold Edge</strong> accounts for <strong>38%</strong> of all active partner designs. Metallic Dual-Color is second at 24%.<br><br>Community colleges skew toward simpler designs (74% Classic Satin). 4-year universities prefer embroidered options at nearly 2:1.<br><br><strong>Trending this week:</strong> Royal Blue + White is up 40% vs the same period last year — driven by a few large state school orders.",
+    dag: 2
+  },
+  {
+    q: "How long are customers waiting from order to shipment?",
+    a: "Average order-to-ship: <strong>6.2 business days</strong>.<br><br>Breaking it down:<br>— Order → Odoo sync: <strong>avg 4.1 hrs</strong> (should be ~15 min — this is the webhook lag)<br>— Odoo → digitizing queue: ~1 day<br>— Digitizing → production: 2–3 days<br>— Production → ship: same day<br><br>Fixing the WooCommerce→Odoo race condition alone saves ~3.5 hours per order and meaningfully reduces escalations.",
+    dag: 1
+  },
+  {
+    q: "What would a 24-hour outage cost us during peak week?",
+    a: "Based on last season's order velocity and your peak timing (late April / early May): a 24-hour outage on the partner site would cost approximately <strong>$28,000–$35,000 in GMV</strong>.<br><br>Secondary effects: support volume spikes ~300%, and roughly <strong>18% of customers who hit an outage don't come back</strong>.<br><br>You've had 8 outages since March 2026. The cumulative exposure is significant. Proper staging + CI/CD + auto-scaling eliminates essentially all of this risk.",
+    dag: 3
+  }
+];
+
+// Layout: 5 columns left→right
+// Col1 x=15  (w=100): User Query
+// Col2 x=155 (w=110): Root Agent
+// Col3 x=310 (w=128): Intent node
+// Col4 x=488 (w=148): Engine pool — ALL 6 always shown, subset active per query
+// Col5 x=688 (w=118): Format/Result
+// ViewBox 820×340
+
+const C   = {q:15,  ra:155, ic:310, eng:488, res:688};
+const NW  = {q:100, ra:110, ic:128, eng:148, res:118};
+const NH  = 40;
+const GAP = 10;
+
+// Fixed 6-engine pool — always rendered, always the same y positions
+const ENGINE_POOL = [
+  {id:'wcs', label:'WC Orders (Stoles)'},
+  {id:'wcp', label:'WC Orders (Partner)'},
+  {id:'sc',  label:'School Config DB'},
+  {id:'dc',  label:'Design Config DB'},
+  {id:'od',  label:'Odoo / Prod Status'},
+  {id:'pm',  label:'Perf Metrics'},
+];
+const TOTAL_ENG = ENGINE_POOL.length;
+const ENG_BLOCK = TOTAL_ENG * NH + (TOTAL_ENG - 1) * GAP;
+const ENG_TOP   = (340 - ENG_BLOCK) / 2;
+const ENGINE_NODES = ENGINE_POOL.map((e, i) => ({
+  id: e.id,
+  x: C.eng, y: ENG_TOP + i * (NH + GAP), w: NW.eng, h: NH,
+  label: e.label,
+}));
+const CY = 340/2 - NH/2; // vertical center for linear nodes
+
+function makeLinear(id, col, label, type){
+  return {id, x:C[col], y:CY, w:NW[col], h:NH, label, type};
+}
+
+// Per-query: which engine ids are active, and what the result label is
+const DAGS = [
+  {
+    subtitle: "Agent considered 6 engines — used WC Orders (Stoles) + School Config DB",
+    active: ['wcs','sc'],
+    intentLabel: 'Intent: Analytics',
+    resultLabel: 'Format Response',
+  },
+  {
+    subtitle: "Agent considered 6 engines — used WC Orders (both) + Odoo + Perf Metrics",
+    active: ['wcs','wcp','od','pm'],
+    intentLabel: 'Intent: Diagnostic',
+    resultLabel: 'Correlate + Format',
+  },
+  {
+    subtitle: "Agent considered 6 engines — used Design Config DB + WC Orders (Partner)",
+    active: ['dc','wcp'],
+    intentLabel: 'Intent: Product',
+    resultLabel: 'Format Response',
+  },
+  {
+    subtitle: "Agent considered 6 engines — used WC Orders (Stoles) + Odoo + Perf Metrics",
+    active: ['wcs','od','pm'],
+    intentLabel: 'Intent: Risk',
+    resultLabel: 'Format + Narrative',
+  },
+];
+
+function rgt(n){ return {x:n.x+n.w, y:n.y+n.h/2}; }
+function lft(n){ return {x:n.x,     y:n.y+n.h/2}; }
+
+function nodeText(n, tc){
+  const cx=n.x+n.w/2, cy=n.y+n.h/2;
+  const words=n.label.split(' ');
+  if(words.length<=2){
+    return `<text x="${cx}" y="${cy+4}" text-anchor="middle" style="fill:${tc};font-family:Inter,sans-serif;font-size:10.5px;font-weight:500;">${n.label}</text>`;
+  }
+  const mid=Math.ceil(words.length/2);
+  const l1=words.slice(0,mid).join(' '), l2=words.slice(mid).join(' ');
+  return `<text text-anchor="middle" style="fill:${tc};font-family:Inter,sans-serif;font-size:10.5px;font-weight:500;">
+    <tspan x="${cx}" y="${cy-5}">${l1}</tspan>
+    <tspan x="${cx}" dy="14">${l2}</tspan>
+  </text>`;
+}
+
+function drawNode(n, type){
+  let fill,stroke,sw,tc;
+  if(type==='start') {fill='#edfaf4';stroke='#059669';sw=2;  tc='#065f46';}
+  else if(type==='end')   {fill='#f3f0ff';stroke='#7c5cfc';sw=2;  tc='#4c1d95';}
+  else if(type==='active'){fill='#eff2ff';stroke='#3b63f7';sw=2;  tc='#1e3a8a';}
+  else                    {fill='#f8f9fc';stroke='#d1d5e0';sw=1.5;tc='#c4cad8';}
+  return `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="9" style="fill:${fill};stroke:${stroke};stroke-width:${sw};"/>`
+       + nodeText(n, tc);
+}
+
+function bezier(from, to, active){
+  const dx=to.x-from.x;
+  const p=`M${from.x},${from.y} C${from.x+dx*.5},${from.y} ${to.x-dx*.5},${to.y} ${to.x},${to.y}`;
+  return active
+    ? `<path d="${p}" style="stroke:#3b63f7;stroke-width:2;fill:none;marker-end:url(#ma);"/>`
+    : `<path d="${p}" style="stroke:#d8dce8;stroke-width:1.5;fill:none;stroke-dasharray:5,4;marker-end:url(#md);opacity:0.55;"/>`;
+}
+
+function renderDag(idx){
+  const dag = DAGS[idx];
+  document.getElementById('dagSubtitle').textContent = dag.subtitle;
+  const activeSet = new Set(dag.active);
+
+  // Build linear nodes
+  const qNode  = makeLinear('q',  'q',  'User Query',       'start');
+  const raNode  = makeLinear('ra', 'ra', 'Root Agent',       'active');
+  const icNode  = makeLinear('ic', 'ic', dag.intentLabel,    'active');
+  const resNode = makeLinear('res','res', dag.resultLabel,   'end');
+
+  // Result node: vertically center between active engine nodes
+  const activeEngs = ENGINE_NODES.filter(e=>activeSet.has(e.id));
+  const avgY = activeEngs.reduce((s,e)=>s+e.y+e.h/2,0)/activeEngs.length;
+  resNode.y = avgY - NH/2;
+
+  let h=`<defs>
+    <marker id="ma" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b63f7"/>
+    </marker>
+    <marker id="md" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#c4cad8"/>
+    </marker>
+  </defs>`;
+
+  // Edges — drawn first (behind nodes)
+  // q → ra → ic
+  h+=bezier(rgt(qNode), lft(raNode), true);
+  h+=bezier(rgt(raNode), lft(icNode), true);
+  // ic → each engine
+  ENGINE_NODES.forEach(e=>{
+    const active=activeSet.has(e.id);
+    h+=bezier(rgt(icNode), lft(e), active);
+  });
+  // engines → result
+  ENGINE_NODES.forEach(e=>{
+    const active=activeSet.has(e.id);
+    h+=bezier(rgt(e), lft(resNode), active);
+  });
+
+  // Nodes — drawn on top
+  h+=drawNode(qNode,  'start');
+  h+=drawNode(raNode, 'active');
+  h+=drawNode(icNode, 'active');
+  ENGINE_NODES.forEach(e=>{
+    h+=drawNode(e, activeSet.has(e.id) ? 'active' : 'dim');
+  });
+  h+=drawNode(resNode, 'end');
+
+  const svg=document.getElementById('dagSvg');
+  svg.innerHTML=h;
+  svg.setAttribute('viewBox', `0 0 820 340`);
+}
+
+function openDag(idx){
+  renderDag(idx);
+  document.getElementById('dagModal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('dagModal').classList.remove('open');
+}
+document.getElementById('dagModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function askQ(idx){
+  const chips=document.querySelectorAll('.chip');
+  if(chips[idx].disabled)return;
+  chips[idx].disabled=true;
+  const msgs=document.getElementById('chatMessages');
+  const typing=document.getElementById('typingIndicator');
+  const um=document.createElement('div');
+  um.className='msg user';
+  um.innerHTML=`<div class="msg-bubble">${QA[idx].q}</div>`;
+  msgs.appendChild(um);
+  msgs.scrollTop=msgs.scrollHeight;
+  typing.style.display='flex';
+  setTimeout(()=>{
+    msgs.scrollTop=msgs.scrollHeight;
+  },50);
+  setTimeout(()=>{
+    typing.style.display='none';
+    const am=document.createElement('div');
+    am.className='msg agent';
+    am.innerHTML=`<div class="msg-bubble">${QA[idx].a}</div>
+    <div class="msg-meta">
+      <button class="dag-btn" onclick="openDag(${QA[idx].dag})"><span style="font-size:0.9rem;">⬡</span> How was this derived?</button>
+    </div>`;
+    msgs.appendChild(am);
+    msgs.scrollTop=msgs.scrollHeight;
+  }, 1300+Math.random()*700);
+}
+</script>
+</body>
+</html>
