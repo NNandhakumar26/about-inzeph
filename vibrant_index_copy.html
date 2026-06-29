@@ -15,7 +15,9 @@
   <div id="root"></div>
 
   <!-- Your React Code -->
-  <script type="text/babel">
+  <script type="text/babel" data-presets="react">
+    /** @jsx React.createElement */
+    /** @jsxFrag React.Fragment */
     const { useState, useEffect, useRef } = React;
 
     const STYLES = `

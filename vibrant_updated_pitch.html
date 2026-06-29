@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibrant Spaces — Implementation Blueprint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Expanded:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ---------- tokens ---------- */
+        :root {
+            --paper: #ffffff;
+            --surface: #F6F7F9;
+            --surface-2: #EEF0F4;
+            --ink: #14161C;
+            /* near-black — headlines / structure */
+            --ink-2: #3B4049;
+            /* body text */
+            --muted: #8A8F9C;
+            /* labels */
+            --line: #E7E9EF;
+            /* hairline */
+            --accent: #2433E8;
+            /* electric ultramarine */
+            --accent-deep: #1A24B0;
+            /* accent as text on white */
+            --accent-soft: #E7E9FE;
+            /* highlighter / tint surface */
+            --accent-line: #C6CBFB;
+
+            --display: 'Archivo', system-ui, sans-serif;
+            --exp: 'Archivo Expanded', 'Archivo', system-ui, sans-serif;
+            --body: 'Inter', system-ui, sans-serif;
+            --serif: 'Instrument Serif', Georgia, serif;
+
+            --sh-sm: 0 1px 2px rgba(20, 22, 28, .06), 0 1px 1px rgba(20, 22, 28, .03);
+            --sh: 0 6px 22px rgba(20, 22, 28, .07), 0 2px 6px rgba(20, 22, 28, .04);
+            --sh-accent: 0 20px 44px rgba(36, 51, 232, .22);
+            --wrap: 860px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink-2);
+            font-family: var(--body);
+            font-size: 1.075rem;
+            line-height: 1.7;
+            letter-spacing: -.003em;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #fff
+        }
+
+        #bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: var(--accent);
+            z-index: 50;
+            transition: width .08s linear
+        }
+
+        .wrap {
+            max-width: var(--wrap);
+            margin: 0 auto;
+            padding: 0 30px
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--ink);
+            font-family: var(--display);
+            font-weight: 700;
+            letter-spacing: -.02em;
+            line-height: 1.12;
+            margin: 0
+        }
+
+        p {
+            margin: 0 0 1.05em
+        }
+
+        strong {
+            font-weight: 700;
+            color: var(--ink)
+        }
+
+        a {
+            color: var(--accent-deep);
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px
+        }
+
+        /* eye-catch helpers */
+        .hl {
+            background: var(--accent-soft);
+            color: var(--ink);
+            padding: .05em .32em;
+            border-radius: 5px;
+            font-weight: 500;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone
+        }
+
+        .em {
+            color: var(--accent-deep);
+            font-weight: 600
+        }
+
+        .serif {
+            font-family: var(--serif);
+            font-style: italic;
+            letter-spacing: 0;
+            font-weight: 400
+        }
+
+        .serif.big {
+            font-size: 1.16em;
+            color: var(--accent-deep)
+        }
+
+        .kicker {
+            font-family: var(--body);
+            font-size: .74rem;
+            font-weight: 600;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        /* ---------- hero ---------- */
+        .topline {
+            height: 4px;
+            background: var(--accent)
+        }
+
+        .hero {
+            padding: 78px 0 56px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .hero .ey {
+            font-family: var(--body);
+            font-size: .76rem;
+            font-weight: 600;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .hero .ey b {
+            color: var(--accent-deep)
+        }
+
+        .hero .ey .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent)
+        }
+
+        .hero h1 {
+            font-family: var(--exp);
+            font-weight: 800;
+            font-size: clamp(2.5rem, 6vw, 4.3rem);
+            line-height: 1.0;
+            letter-spacing: -.035em;
+            margin: 28px 0 0;
+            max-width: 15ch
+        }
+
+        .hero h1 .serif {
+            font-weight: 400;
+            letter-spacing: -.01em
+        }
+
+        .hero .lede {
+            font-size: clamp(1.12rem, 2.1vw, 1.34rem);
+            line-height: 1.55;
+            color: var(--ink-2);
+            max-width: 60ch;
+            margin: 26px 0 0
+        }
+
+        .titleblock {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 40px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--sh-sm)
+        }
+
+        .titleblock div {
+            padding: 16px 18px;
+            border-right: 1px solid var(--line);
+            background: var(--paper)
+        }
+
+        .titleblock div:last-child {
+            border-right: 0
+        }
+
+        .titleblock .lbl {
+            font-size: .64rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .titleblock .val {
+            font-family: var(--display);
+            font-weight: 700;
+            font-size: .94rem;
+            color: var(--ink);
+            margin-top: 6px
+        }
+
+        /* ---------- index ---------- */
+        .index {
+            padding: 42px 0
+        }
+
+        .index .kicker {
+            display: flex;
+            align-items: center;
+            gap: .6em
+        }
+
+        .index .kicker .n {
+            color: var(--accent);
+            font-weight: 700
+        }
+
+        .index ol {
+            list-style: none;
+            margin: 20px 0 0;
+            padding: 0;
+            columns: 2;
+            column-gap: 54px
+        }
+
+        .index li {
+            break-inside: avoid;
+            margin: 0 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .index a {
+            display: flex;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--ink);
+            font-weight: 500;
+            font-size: .96rem;
+            align-items: baseline
+        }
+
+        .index a .n {
+            font-family: var(--display);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: .82rem;
+            min-width: 1.6em
+        }
+
+        .index a:hover {
+            color: var(--accent-deep)
+        }
+
+        /* ---------- section ---------- */
+        section.sec {
+            padding: 56px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .sec-head {
+            margin-bottom: 26px
+        }
+
+        .sec-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px
+        }
+
+        .sec-num {
+            font-family: var(--exp);
+            font-weight: 800;
+            font-size: 2.3rem;
+            line-height: 1;
+            color: var(--accent);
+            letter-spacing: -.04em
+        }
+
+        .sec-head h2 {
+            font-size: clamp(1.6rem, 3.3vw, 2.35rem);
+            max-width: 22ch
+        }
+
+        .lead {
+            font-size: 1.22rem;
+            line-height: 1.5;
+            color: var(--ink);
+            font-weight: 400
+        }
+
+        .lead.dk {
+            color: var(--ink)
+        }
+
+        /* pull quote */
+        .pull {
+            border-left: 4px solid var(--accent);
+            padding: 8px 0 8px 24px;
+            margin: 30px 0;
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            line-height: 1.3;
+            color: var(--ink)
+        }
+
+        .pull .em {
+            color: var(--accent-deep);
+            font-style: italic
+        }
+
+        /* partnership duo */
+        .duo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 10px
+        }
+
+        .panel {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 26px;
+            box-shadow: var(--sh)
+        }
+
+        .panel .tag {
+            font-size: .7rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .panel h3 {
+            font-size: 1.22rem;
+            margin: 10px 0 12px
+        }
+
+        .panel p {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--ink-2)
+        }
+
+        .panel.built {
+            border-top: 4px solid var(--accent)
+        }
+
+        .panel.add {
+            border-top: 4px solid var(--ink)
+        }
+
+        /* tools */
+        .tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 10px
+        }
+
+        .tool {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 22px 24px;
+            box-shadow: var(--sh-sm);
+            transition: box-shadow .2s, transform .2s
+        }
+
+        .tool:hover {
+            box-shadow: var(--sh);
+            transform: translateY(-2px)
+        }
+
+        .tool h3 {
+            font-size: 1.1rem;
+            margin: 0 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .tool h3 .ix {
+            font-family: var(--display);
+            font-weight: 800;
+            font-size: .78rem;
+            color: #fff;
+            background: var(--accent);
+            width: 1.7em;
+            height: 1.7em;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .tool p {
+            font-size: .99rem;
+            margin: 0 0 14px;
+            color: var(--ink-2)
+        }
+
+        .tool .miss {
+            font-size: .86rem;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            padding-top: 12px
+        }
+
+        .tool .miss b {
+            color: var(--accent-deep);
+            font-weight: 700
+        }
+
+        /* lifecycle flow */
+        .flow {
+            margin-top: 12px
+        }
+
+        .flowrow {
+            display: flex;
+            align-items: stretch;
+            flex-wrap: wrap
+        }
+
+        .stage {
+            flex: 1 1 116px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center;
+            box-shadow: var(--sh-sm)
+        }
+
+        .stage .s {
+            font-family: var(--display);
+            font-weight: 700;
+            color: var(--ink);
+            font-size: .98rem;
+            line-height: 1.2
+        }
+
+        .stage .k {
+            font-size: .62rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--muted);
+            margin-top: 5px;
+            font-weight: 600
+        }
+
+        .gap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 62px;
+            position: relative
+        }
+
+        .gap em {
+            position: relative;
+            background: var(--paper);
+            padding: 0 6px;
+            font-style: normal;
+            font-size: .6rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            z-index: 1
+        }
+
+        .gap::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 50%;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, var(--accent-line) 0 5px, transparent 5px 10px)
+        }
+
+        .converge {
+            margin-top: 16px;
+            text-align: center
+        }
+
+        .converge span {
+            font-size: .72rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .platband {
+            margin-top: 14px;
+            background: var(--ink);
+            color: #fff;
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: var(--sh)
+        }
+
+        .platband .t {
+            font-family: var(--display);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #fff;
+            letter-spacing: -.01em
+        }
+
+        .platband .d {
+            font-size: .7rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #aab0c4;
+            margin-top: 8px;
+            font-weight: 600
+        }
+
+        /* architecture stack */
+        .stack {
+            margin-top: 12px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--sh);
+            background: var(--paper)
+        }
+
+        .layer {
+            padding: 20px 22px
+        }
+
+        .layer+.layer {
+            border-top: 1px solid var(--line)
+        }
+
+        .layer .lab {
+            font-size: .68rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+            font-weight: 600
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .chip {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: .9rem;
+            padding: 9px 15px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        .layer.core {
+            background: var(--accent)
+        }
+
+        .layer.core .lab {
+            color: #cdd2fb
+        }
+
+        .layer.core .chip {
+            background: rgba(255, 255, 255, .13);
+            border-color: rgba(255, 255, 255, .28);
+            color: #fff
+        }
+
+        .layer.data {
+            background: var(--surface)
+        }
+
+        .layer.data .chip {
+            border: 1px dashed var(--accent-line);
+            color: var(--accent-deep);
+            background: var(--paper)
+        }
+
+        .stack .note {
+            font-size: .72rem;
+            color: var(--muted);
+            text-align: center;
+            padding: 14px 16px;
+            border-top: 1px solid var(--line);
+            background: var(--surface);
+            font-weight: 500
+        }
+
+        /* control centre */
+        .ccwrap {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 24px;
+            margin-top: 10px;
+            box-shadow: var(--sh)
+        }
+
+        .cchead {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 16px;
+            margin-bottom: 18px
+        }
+
+        .cchead .t {
+            font-family: var(--display);
+            font-weight: 700;
+            color: var(--ink);
+            font-size: 1.08rem
+        }
+
+        .cchead .il {
+            font-size: .64rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px
+        }
+
+        .tile .k {
+            font-size: .62rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .tile .v {
+            font-family: var(--exp);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--ink);
+            margin-top: 8px
+        }
+
+        .tile.hl-tile {
+            background: transparent
+        }
+
+        .tile.hl-tile .v {
+            color: var(--accent-deep)
+        }
+
+        /* now/later */
+        .contrast {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 12px 0 8px
+        }
+
+        .cc {
+            border-radius: 16px;
+            padding: 24px
+        }
+
+        .cc.now {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-line)
+        }
+
+        .cc.later {
+            background: var(--surface);
+            border: 1px solid var(--line)
+        }
+
+        .cc .when {
+            font-size: .7rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            font-weight: 700
+        }
+
+        .cc.now .when {
+            color: var(--accent-deep)
+        }
+
+        .cc.later .when {
+            color: var(--muted)
+        }
+
+        .cc h3 {
+            font-size: 1.12rem;
+            margin: 9px 0 11px
+        }
+
+        .cc p {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--ink-2)
+        }
+
+        .cc .meta {
+            font-family: var(--serif);
+            font-style: italic;
+            color: var(--accent-deep);
+            margin-top: 14px;
+            font-size: 1.12rem;
+            display: block;
+            line-height: 1.35
+        }
+
+        .cc.later .meta {
+            color: var(--muted)
+        }
+
+        /* ticked list */
+        .pts {
+            list-style: none;
+            margin: 20px 0 0;
+            padding: 0
+        }
+
+        .pts li {
+            position: relative;
+            padding: 0 0 15px 32px;
+            font-size: 1.05rem;
+            color: var(--ink-2)
+        }
+
+        .pts li::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: .5em;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--accent)
+        }
+
+        .pts li b {
+            color: var(--ink);
+            font-weight: 700
+        }
+
+        /* roadmap */
+        .road {
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .ph {
+            flex: 1 1 150px;
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            box-shadow: var(--sh-sm)
+        }
+
+        .ph .pk {
+            font-size: .64rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 700
+        }
+
+        .ph .pt {
+            font-family: var(--display);
+            font-weight: 700;
+            color: var(--ink);
+            font-size: 1.04rem;
+            margin: 8px 0 7px;
+            line-height: 1.2
+        }
+
+        .ph .pd {
+            font-size: .92rem;
+            margin: 0;
+            color: var(--ink-2)
+        }
+
+        .ph.build {
+            border-top: 4px solid var(--accent)
+        }
+
+        .ph.build .pk {
+            color: var(--accent-deep)
+        }
+
+        .ph.later {
+            border-top: 4px solid var(--surface-2);
+            opacity: .96
+        }
+
+        .ph.later .pt {
+            color: var(--muted)
+        }
+
+        .roadkey {
+            font-size: .74rem;
+            color: var(--muted);
+            margin-top: 18px;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-weight: 500
+        }
+
+        .roadkey span {
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+        .roadkey i {
+            width: 24px;
+            height: 4px;
+            border-radius: 2px;
+            display: inline-block
+        }
+
+        .roadkey .a {
+            background: var(--accent)
+        }
+
+        .roadkey .b {
+            background: var(--surface-2)
+        }
+
+        /* foundation accent block */
+        .start {
+            background: var(--accent);
+            color: #fff;
+            border-radius: 18px;
+            padding: 32px;
+            margin-top: 10px;
+            box-shadow: var(--sh-accent)
+        }
+
+        .start .pk {
+            font-size: .72rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: #cdd2fb;
+            font-weight: 700
+        }
+
+        .start h3 {
+            color: #fff;
+            font-size: 1.3rem;
+            margin: 10px 0 12px
+        }
+
+        .start p {
+            color: #dfe2ff;
+            font-size: 1.04rem
+        }
+
+        .start ul {
+            margin: 16px 0 0;
+            padding: 0;
+            list-style: none
+        }
+
+        .start li {
+            position: relative;
+            padding: 0 0 12px 28px;
+            color: #eef0ff;
+            font-size: 1.01rem
+        }
+
+        .start li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: .5em;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            background: #fff
+        }
+
+        /* steps numbered */
+        .steps {
+            list-style: none;
+            counter-reset: s;
+            margin: 16px 0 0;
+            padding: 0
+        }
+
+        .steps li {
+            counter-increment: s;
+            position: relative;
+            padding: 2px 0 20px 56px;
+            font-size: 1.05rem;
+            color: var(--ink-2)
+        }
+
+        .steps li::before {
+            content: counter(s, decimal-leading-zero);
+            position: absolute;
+            left: 0;
+            top: -2px;
+            font-family: var(--display);
+            font-weight: 800;
+            color: #fff;
+            background: var(--accent);
+            font-size: .86rem;
+            border-radius: 9px;
+            padding: 7px 10px;
+            line-height: 1
+        }
+
+        .steps li b {
+            color: var(--ink);
+            font-weight: 700
+        }
+
+        .defer {
+            font-size: .92rem;
+            color: var(--ink-2);
+            background: var(--surface);
+            border: 1px dashed var(--accent-line);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-top: 10px
+        }
+
+        .defer b {
+            color: var(--accent-deep)
+        }
+
+        /* footer */
+        footer {
+            background: var(--surface);
+            border-top: 4px solid var(--accent);
+            margin-top: 0;
+            padding: 48px 0 56px
+        }
+
+        footer .tb {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--paper);
+            box-shadow: var(--sh-sm)
+        }
+
+        footer .tb div {
+            padding: 16px 18px;
+            border-right: 1px solid var(--line)
+        }
+
+        footer .tb div:last-child {
+            border-right: 0
+        }
+
+        footer .tb .lbl {
+            font-size: .62rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        footer .tb .val {
+            font-family: var(--display);
+            font-weight: 700;
+            color: var(--ink);
+            margin-top: 6px;
+            font-size: .92rem
+        }
+
+        footer .fine {
+            margin-top: 22px;
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 64ch;
+            font-size: .86rem
+        }
+
+        @media (max-width:720px) {
+
+            .titleblock,
+            footer .tb {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .duo,
+            .tools,
+            .contrast {
+                grid-template-columns: 1fr
+            }
+
+            .index ol {
+                columns: 1
+            }
+
+            .tiles {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .gap {
+                flex-basis: 44px
+            }
+
+            .sec-num {
+                font-size: 1.9rem
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            html {
+                scroll-behavior: auto
+            }
+
+            #bar {
+                transition: none
+            }
+
+            .tool {
+                transition: none
+            }
+        }
+
+        @media print {
+
+            #bar,
+            .topline {
+                display: none
+            }
+
+            body {
+                font-size: 11pt
+            }
+
+            .start,
+            .layer.core,
+            .platband {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact
+            }
+
+            section.sec {
+                padding: 18px 0;
+                page-break-inside: avoid
+            }
+
+            .panel,
+            .tool,
+            .ph,
+            .cc,
+            .stack,
+            .ccwrap {
+                break-inside: avoid;
+                box-shadow: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bar"></div>
+    <div class="topline"></div>
+
+    <!-- ===================== HERO ===================== -->
+    <header class="hero">
+        <div class="wrap">
+            <div class="ey"><span>Inzeph Software Ventures</span><span class="dot"></span><b>Implementation
+                    Blueprint</b><span class="dot"></span><span>Rev A</span></div>
+            <h1>The platform you started, <span class="serif">brought to life.</span></h1>
+            <p class="lede">Vibrant Spaces has already defined what its operations software should be — five working
+                tools spanning estimation, production, procurement, drawings, and planning. This blueprint sets out how
+                Inzeph turns that into one secure, connected, multi-user platform — <span class="em">realizing the
+                    vision you've built, not rebuilding it.</span></p>
+            <div class="titleblock">
+                <div>
+                    <div class="lbl">Prepared for</div>
+                    <div class="val">Vibrant Spaces</div>
+                </div>
+                <div>
+                    <div class="lbl">Prepared by</div>
+                    <div class="val">Inzeph Software Ventures</div>
+                </div>
+                <div>
+                    <div class="lbl">Revision</div>
+                    <div class="val">A — for review</div>
+                </div>
+                <div>
+                    <div class="lbl">Date</div>
+                    <div class="val">June 2026</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== INDEX ===================== -->
+    <div class="wrap index">
+        <span class="kicker"><span class="n">▸</span> On this sheet</span>
+        <ol>
+            <li><a href="#s1"><span class="n">01</span> The partnership</a></li>
+            <li><a href="#s2"><span class="n">02</span> The toolkit today</a></li>
+            <li><a href="#s3"><span class="n">03</span> One project, five views</a></li>
+            <li><a href="#s4"><span class="n">04</span> What v1 is — and isn't</a></li>
+            <li><a href="#s5"><span class="n">05</span> The foundation it needs</a></li>
+            <li><a href="#s6"><span class="n">06</span> How it fits together</a></li>
+            <li><a href="#s7"><span class="n">07</span> The single picture</a></li>
+            <li><a href="#s8"><span class="n">08</span> The build sequence</a></li>
+            <li><a href="#s9"><span class="n">09</span> Connecting to your data</a></li>
+            <li><a href="#s10"><span class="n">10</span> The phased roadmap</a></li>
+            <li><a href="#s11"><span class="n">11</span> How we start</a></li>
+            <li><a href="#s12"><span class="n">12</span> What we need from you</a></li>
+        </ol>
+    </div>
+
+    <main class="wrap">
+
+        <!-- 01 -->
+        <section class="sec" id="s1">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">01</span><span class="kicker">The partnership</span></div>
+                <h2>Realizing the vision you've already built.</h2>
+            </div>
+            <p class="lead">The hardest part of any software project — knowing exactly what it should be — is usually
+                where things stall. <span class="em">You've already done it.</span></p>
+            <p>Working through the screens, the workflows and the details, you've defined a complete operations product:
+                how an estimate is built, how a cut list is structured, how materials are tracked, how a shutter drawing
+                is laid out. That is real product design, and it normally takes weeks of discovery to reach. <span
+                    class="hl">You've reached it already.</span></p>
+            <p>What's left is a different craft. Inzeph's job is the engineering beneath the surface — making your tools
+                safe for your whole team to use at once, connecting them so nothing is re-typed, and wiring them to your
+                live data so the numbers are real. Two crafts, one product. You designed it; we make it run.</p>
+            <div class="pull">We're not redoing your work. We're building the <span class="em">engine under it.</span>
+            </div>
+            <div class="duo">
+                <div class="panel built">
+                    <div class="tag">What you've built</div>
+                    <h3>The product, fully defined</h3>
+                    <p>Five working tools that already cover most of a project's life — the screens, the workflows, and
+                        the domain detail of how Vibrant Spaces actually quotes, builds and procures. The "what" is
+                        done.</p>
+                </div>
+                <div class="panel add">
+                    <div class="tag">What Inzeph adds</div>
+                    <h3>The engineering that makes it real</h3>
+                    <p>Real users and access control, one shared source of truth across every tool, a full history of
+                        changes, a live connection to your data, and a secure platform it all runs on. The "make it
+                        real" is ours.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="sec" id="s2">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">02</span><span class="kicker">The toolkit today</span></div>
+                <h2>Five good tools — each strong, each on its own island.</h2>
+            </div>
+            <p>Each tool is a polished, single-purpose app that runs in the browser. Read together, they already cover
+                the spine of an interior project — which is exactly why bringing them onto one platform is worth doing,
+                rather than starting over. Here is what each one owns, and the one thing they all share: <span
+                    class="hl">they're sealed off from each other.</span></p>
+            <div class="tools">
+                <div class="tool">
+                    <h3><span class="ix">A</span> Estimation &amp; quoting</h3>
+                    <p>Clients, versioned estimates and annexures, room-wise line items, a shared rate card, GST
+                        handling, and clean PDF / Excel quotes.</p>
+                    <div class="miss"><b>Today:</b> shows paid &amp; balance but can't record a payment · no shared data
+                        · runs only in one browser.</div>
+                </div>
+                <div class="tool">
+                    <h3><span class="ix">B</span> Production cut list</h3>
+                    <p>Panel-level cut and edgeband schedules, composite codes, a preset library, and Excel / print
+                        output for the factory.</p>
+                    <div class="miss"><b>Today:</b> not linked to the estimate that should drive it · runs only in one
+                        browser.</div>
+                </div>
+                <div class="tool">
+                    <h3><span class="ix">C</span> Profile shutter drawings</h3>
+                    <p>Shutter shop-drawings with geometry, glazing, hardware and fixing detail, plus title blocks and
+                        component libraries.</p>
+                    <div class="miss"><b>Today:</b> detached from the project and room it belongs to · runs only in one
+                        browser.</div>
+                </div>
+                <div class="tool">
+                    <h3><span class="ix">D</span> Material tracker</h3>
+                    <p>A budget baseline against site indents, a carpentry &amp; hardware catalog, a dispatch workflow,
+                        and a budget-versus-actual "bleed" view.</p>
+                    <div class="miss"><b>Today:</b> not linked to the quote that should seed it · runs only in one
+                        browser.</div>
+                </div>
+                <div class="tool">
+                    <h3><span class="ix">E</span> Schedule builder</h3>
+                    <p>A structured work-breakdown schedule — activities, sub-tasks, planned dates, units and progress
+                        roll-up.</p>
+                    <div class="miss"><b>Today:</b> no shared data · runs only in one browser.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="sec" id="s3">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">03</span><span class="kicker">One project, five views</span>
+                </div>
+                <h2>The same project, re-typed at every step.</h2>
+            </div>
+            <p>A single Vibrant project travels a clear path — from a quote, into production and procurement, alongside
+                a schedule. Each tool owns one stretch of that path. The trouble is the joins between them: every
+                handover today is a manual re-entry, and because everything saves only to the browser it runs on,
+                there's no shared, multi-person record of the project anywhere.</p>
+            <div class="flow">
+                <div class="flowrow">
+                    <div class="stage">
+                        <div class="s">Estimate</div>
+                        <div class="k">Tool A</div>
+                    </div>
+                    <div class="gap"><em>re-key</em></div>
+                    <div class="stage">
+                        <div class="s">Production</div>
+                        <div class="k">Tool B · C</div>
+                    </div>
+                    <div class="gap"><em>re-key</em></div>
+                    <div class="stage">
+                        <div class="s">Procurement</div>
+                        <div class="k">Tool D</div>
+                    </div>
+                    <div class="gap"><em>re-key</em></div>
+                    <div class="stage">
+                        <div class="s">Schedule</div>
+                        <div class="k">Tool E</div>
+                    </div>
+                </div>
+                <div class="converge"><span>↓ &nbsp; onto one shared record</span></div>
+                <div class="platband">
+                    <div class="t">One Vibrant Spaces platform</div>
+                    <div class="d">one project · one client · one library · one history · real users</div>
+                </div>
+            </div>
+            <p style="margin-top:24px">So the goal isn't more tools — it's <span class="hl">removing the joins.</span>
+                When estimate, production, procurement and schedule all read and write the same project, the re-typing
+                disappears, "who changed this?" finally has an answer, and the whole project fits on one screen.</p>
+        </section>
+
+        <!-- 04 -->
+        <section class="sec" id="s4">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">04</span><span class="kicker">What v1 is — and isn't</span>
+                </div>
+                <h2>Make the product real. Hold a firm edge around it.</h2>
+            </div>
+            <p><strong>v1 is your five tools, rebuilt as one platform</strong> — with real logins, shared data, a full
+                change history, and a live connection to your data so the screens show real numbers instead of sample
+                figures. We keep the product exactly as you've defined it; what we rebuild is the plumbing beneath it,
+                smoothing the rough edges in the flow as we go. We're <span class="hl">making your screens work for
+                    real</span> — not redesigning what they do.</p>
+            <p>Holding a firm edge around v1 is what keeps it fast and on-budget. Anything not already in your five
+                tools sits outside v1, by design:</p>
+            <ul class="pts">
+                <li><b>Data intelligence &amp; the AI design tool</b> — analytics, forecasting and the design assistant
+                    come later, in Phase 2 (see section 09).</li>
+                <li><b>An HR / people module</b> — a natural future extension once the platform is live, but not part of
+                    this build.</li>
+            </ul>
+        </section>
+
+        <!-- 05 -->
+        <section class="sec" id="s5">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">05</span><span class="kicker">The foundation it needs</span>
+                </div>
+                <h2>Four things every real product needs — that the tools don't have yet.</h2>
+            </div>
+            <p>These aren't features bolted onto one screen. They're <span class="hl">the ground the whole platform
+                    stands on</span> — the part that simply can't exist in a browser-only tool, and the reason this is
+                engineering rather than wiring.</p>
+            <ul class="pts">
+                <li><b>Real users &amp; secure sign-in.</b> Your whole team works in the same system at the same time,
+                    each with their own account.</li>
+                <li><b>Access control you configure.</b> You define the roles and decide what each can see and do — and
+                    change them yourself, anytime. Nothing is hard-coded by us.</li>
+                <li><b>One shared source of truth.</b> Every tool reads and writes the same project, so a number entered
+                    once is correct everywhere. This is what ends the re-typing.</li>
+                <li><b>A full history, with rollback.</b> Every meaningful change records who did what and when, and any
+                    record can be restored to an earlier state.</li>
+            </ul>
+        </section>
+
+        <!-- 06 -->
+        <section class="sec" id="s6">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">06</span><span class="kicker">How it fits together</span>
+                </div>
+                <h2>Your tools as modules, on one shared core.</h2>
+            </div>
+            <p>The shape is simple: one thin shared core that every tool reads and writes, with your tools sitting on
+                top as modules. The core holds the things the tools each keep a separate, broken copy of today — the
+                client, the project, the shared libraries, the people, and the history. It's built on a modern, proven,
+                widely-used technology stack, so it stays fast, secure, and straightforward to maintain and extend.</p>
+            <div class="stack">
+                <div class="layer">
+                    <div class="lab">Your tools — now modules</div>
+                    <div class="chips">
+                        <span class="chip">Estimation</span><span class="chip">Production</span><span
+                            class="chip">Procurement</span><span class="chip">Drawings</span><span
+                            class="chip">Scheduling</span><span class="chip">Control centre</span>
+                    </div>
+                </div>
+                <div class="layer core">
+                    <div class="lab">One shared core — single source of truth</div>
+                    <div class="chips">
+                        <span class="chip">Clients &amp; projects</span><span class="chip">Shared libraries (rates &amp;
+                            catalog)</span><span class="chip">Users &amp; access</span><span class="chip">History &amp;
+                            rollback</span><span class="chip">Documents</span>
+                    </div>
+                </div>
+                <div class="layer data">
+                    <div class="lab">Connected to your live data</div>
+                    <div class="chips">
+                        <span class="chip">Your finance data</span><span class="chip">Your design data</span><span
+                            class="chip">Your project data</span>
+                    </div>
+                </div>
+                <div class="note">Modules are what people use · the core is what they all share · your live data
+                    connects underneath</div>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="sec" id="s7">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">07</span><span class="kicker">The single picture</span></div>
+                <h2>The one screen you don't have today.</h2>
+            </div>
+            <p>Because every module writes to the same project, <span class="hl">one screen can finally pull a project
+                    together</span>: what you quoted, what it's budgeted to cost, what it's actually costing, what
+                you've collected — and the numbers that fall out of that, margin and cash position. It's the complete
+                picture of a project, and it only becomes possible once the tools share one record.</p>
+            <div class="ccwrap">
+                <div class="cchead"><span class="t">Project control centre</span><span class="il">Illustrative
+                        layout</span></div>
+                <div class="tiles">
+                    <div class="tile">
+                        <div class="k">Quoted</div>
+                        <div class="v">—</div>
+                    </div>
+                    <div class="tile">
+                        <div class="k">Budgeted cost</div>
+                        <div class="v">—</div>
+                    </div>
+                    <div class="tile">
+                        <div class="k">Actual to date</div>
+                        <div class="v">—</div>
+                    </div>
+                    <div class="tile">
+                        <div class="k">Collected</div>
+                        <div class="v">—</div>
+                    </div>
+                    <div class="tile hl-tile">
+                        <div class="k">Margin earned</div>
+                        <div class="v">—</div>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top:24px">Roll the same logic across every project and you get the owner's view: pipeline,
+                margin by project, cash flow, and — the signal that matters most in fit-out — projects whose actual cost
+                is drifting past budget before they're done.</p>
+        </section>
+
+        <!-- 08 -->
+        <section class="sec" id="s8">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">08</span><span class="kicker">The build sequence</span></div>
+                <h2>Foundation first, then value in a deliberate order.</h2>
+            </div>
+            <p>The order isn't arbitrary — each step depends on the one before it, so we build the foundation once, then
+                deliver working modules as fast as the dependencies allow.</p>
+            <ul class="pts">
+                <li><b>Foundation.</b> The shared core, sign-in, access control and history. Nothing else is trustworthy
+                    without it.</li>
+                <li><b>Estimation.</b> The entry point of every project — quoting on real, live rates from day one.</li>
+                <li><b>Production &amp; procurement.</b> They depend on an estimate existing first, and run on your real
+                    designs and materials.</li>
+                <li><b>Scheduling.</b> The project schedule as a native module on the same record.</li>
+                <li><b>Control centre.</b> Last, because it can only show what the earlier modules now feed it.</li>
+            </ul>
+        </section>
+
+        <!-- 09 -->
+        <section class="sec" id="s9">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">09</span><span class="kicker">Connecting to your data</span>
+                </div>
+                <h2>What makes it a product, and not a prototype.</h2>
+            </div>
+            <p>Your tools are built around your real operational data — your rates, your materials, your costs. Today
+                they run on figures entered by hand. For the platform to be genuinely useful — not just a better-looking
+                version of the manual process — its screens need to read your real, current numbers: the estimate
+                pricing from your live rates, the production tools reflecting your actual designs and materials. That
+                connection is what turns the prototype into a tool your team relies on daily, and it's what finally
+                <span class="hl">removes the re-typing between systems</span> that makes today's tools slow.</p>
+            <p>This is a focused, bounded step — and it is deliberately <strong>not</strong> the larger "data
+                intelligence" work, which we keep for later. The distinction matters, so it's worth being precise:</p>
+            <div class="contrast">
+                <div class="cc now">
+                    <div class="when">Now — part of building the product</div>
+                    <h3>Operational connection</h3>
+                    <p>Bringing your live, current data into the platform so the screens work for real and your team
+                        stops re-entering it. Specific values, read into the product — for example, from your finance
+                        system (Tally) and your design system (Naadi).</p>
+                    <span class="meta">The plumbing that brings water to the taps. Without it, the taps are dry.</span>
+                </div>
+                <div class="cc later">
+                    <div class="when">Later — Phase 2</div>
+                    <h3>Data intelligence &amp; AI design tool</h3>
+                    <p>Analytics across every project, forecasting, and the AI design assistant — new capabilities built
+                        on top of the data the platform gathers over time. Powerful, but not needed for the product to
+                        function.</p>
+                    <span class="meta">The analytics built on the water system — once it's already running.</span>
+                </div>
+            </div>
+            <p style="margin-top:8px"><strong>Why this belongs in the build now, not in Phase 2:</strong></p>
+            <ul class="pts">
+                <li><b>A product on sample data is still a prototype.</b> This connection completes the product you've
+                    built — it isn't an add-on.</li>
+                <li><b>Removing the manual re-entry is the value.</b> Launch without it and the silos return in a nicer
+                    shell.</li>
+                <li><b>It's far cheaper to wire in as we build the screens</b> than to retrofit afterward — and it's a
+                    bounded task, not the open-ended data work, so it doesn't stretch the timeline.</li>
+            </ul>
+        </section>
+
+        <!-- 10 -->
+        <section class="sec" id="s10">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">10</span><span class="kicker">The phased roadmap</span></div>
+                <h2>Build the product now. Build intelligence on top, later.</h2>
+            </div>
+            <p>The roadmap keeps a clear line between the two. The first phases make your product real and connected;
+                the data-intelligence and AI work sits cleanly in Phase 2, exactly as you'd want — built on top once the
+                platform is running and gathering real data.</p>
+            <div class="road">
+                <div class="ph build">
+                    <div class="pk">Phase 0</div>
+                    <div class="pt">Foundation</div>
+                    <p class="pd">Shared core, sign-in, access control, history.</p>
+                </div>
+                <div class="ph build">
+                    <div class="pk">Phase 1</div>
+                    <div class="pt">Estimation, live</div>
+                    <p class="pd">Quoting on real rates · the product made real.</p>
+                </div>
+                <div class="ph build">
+                    <div class="pk">Phase 1</div>
+                    <div class="pt">Production &amp; procurement</div>
+                    <p class="pd">On your real designs &amp; materials.</p>
+                </div>
+                <div class="ph build">
+                    <div class="pk">Phase 1</div>
+                    <div class="pt">Scheduling &amp; control centre</div>
+                    <p class="pd">The single project picture.</p>
+                </div>
+                <div class="ph later">
+                    <div class="pk">Phase 2</div>
+                    <div class="pt">Data intelligence &amp; AI</div>
+                    <p class="pd">Analytics, forecasting, AI design tool.</p>
+                </div>
+                <div class="ph later">
+                    <div class="pk">Future</div>
+                    <div class="pt">People / HR module</div>
+                    <p class="pd">A natural extension on the same core.</p>
+                </div>
+            </div>
+            <div class="roadkey">
+                <span><i class="a"></i> Building now — the product, real and connected</span>
+                <span><i class="b"></i> Later — intelligence built on top</span>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="sec" id="s11">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">11</span><span class="kicker">How we start</span></div>
+                <h2>A focused first phase that turns the foundation on.</h2>
+            </div>
+            <p>Rather than a long discovery exercise — your tools have already done that work — <span class="hl">we
+                    start by building.</span> The first phase stands up the foundation and brings your first module to
+                life on real data, so you have a working slice of the platform early, and everything after it builds on
+                solid ground.</p>
+            <div class="start">
+                <div class="pk">Foundation phase — the first step</div>
+                <h3>What it delivers</h3>
+                <p>A working, secure slice of the platform you can sign into — proving the shape end-to-end before we
+                    build outward.</p>
+                <ul>
+                    <li>The shared core, secure sign-in, and access control you configure</li>
+                    <li>The change-history and rollback framework, working across the platform</li>
+                    <li>Your first module, live on your real data — not sample figures</li>
+                    <li>A proven, confirmed approach for connecting the rest of your data</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 12 -->
+        <section class="sec" id="s12">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">12</span><span class="kicker">What we need from you</span>
+                </div>
+                <h2>A short list to begin without delay.</h2>
+            </div>
+            <p>None of this blocks the direction above — it's simply what lets us start cleanly and move quickly.</p>
+            <ol class="steps">
+                <li><b>Onboard Inzeph as a vendor.</b> So we can begin the engagement without procurement delays on
+                    either side.</li>
+                <li><b>A copy of each tool's data.</b> Your tools already export to Excel / file — sharing those lets us
+                    seed the new platform with your real projects, so go-live starts with your work already inside.</li>
+                <li><b>Access to the existing tools.</b> A walkthrough of the five apps so we map them precisely and
+                    confirm every detail with you.</li>
+            </ol>
+            <div class="defer">Access to your finance and design systems, and your billing details, aren't needed yet —
+                we'll coordinate those together at the point we reach the data-connection step, so nothing is shared
+                before it's required.</div>
+        </section>
+
+        <!-- next steps -->
+        <section class="sec" id="s13">
+            <div class="sec-head">
+                <div class="sec-top"><span class="sec-num">13</span><span class="kicker">Next steps</span></div>
+                <h2>From blueprint to a build we both commit to.</h2>
+            </div>
+            <ol class="steps">
+                <li><b>Confirm this reads true.</b> Tell us the toolkit, the gaps and the direction are right — and
+                    where they aren't, correct us.</li>
+                <li><b>Onboard us and share the exports.</b> The three items in section 12.</li>
+                <li><b>We begin the foundation phase.</b> A working slice of the platform, on your real data, early.
+                </li>
+            </ol>
+            <div class="pull" style="margin-top:32px">You've already built the product. Let's give it the <span
+                    class="em">engine to run.</span></div>
+        </section>
+
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer>
+        <div class="wrap">
+            <div class="tb">
+                <div>
+                    <div class="lbl">Document</div>
+                    <div class="val">Implementation Blueprint</div>
+                </div>
+                <div>
+                    <div class="lbl">Prepared by</div>
+                    <div class="val">Inzeph Software Ventures</div>
+                </div>
+                <div>
+                    <div class="lbl">For</div>
+                    <div class="val">Vibrant Spaces</div>
+                </div>
+                <div>
+                    <div class="lbl">Revision</div>
+                    <div class="val">A — June 2026</div>
+                </div>
+            </div>
+            <p class="fine">A working document — the direction and structure are firm; precise scope and timeline are
+                confirmed together once the toolkit walkthrough and exports are in hand. Prepared from the five tools
+                shared by Vibrant Spaces.</p>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            var bar = document.getElementById('bar');
+            function upd() {
+                var h = document.documentElement,
+                    max = (h.scrollHeight - h.clientHeight) || 1,
+                    p = Math.min(1, Math.max(0, (h.scrollTop || document.body.scrollTop) / max));
+                bar.style.width = (p * 100).toFixed(1) + '%';
+            }
+            document.addEventListener('scroll', upd, { passive: true });
+            window.addEventListener('resize', upd); upd();
+        })();
+    </script>
+</body>
+
+</html>
